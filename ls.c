@@ -73,8 +73,8 @@ initialize(struct opts_holder *opts){
 void
 traverse(struct opts_holder opts,char * const *dir_name){
 	FTS* file_system = NULL;
-	FTSENT* child = NULL;
 	FTSENT* parent = NULL;
+	FTSENT* child = NULL;
 	if(opts._a){
 		if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
 			fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
@@ -90,20 +90,43 @@ traverse(struct opts_holder opts,char * const *dir_name){
 			fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
 			exit(EXIT_FAILURE);
 		}
-	}
+	}	
 
+	
 	while((parent = fts_read(file_system)) != NULL){
+		if((parent->fts_level > -1) && (parent->fts_name[0] == '.')){
+			if((fts_set(file_system,parent,FTS_SKIP)==-1)){
+				fprintf(stderr,"Could not skip file %s:%s\n",parent->fts_name,strerror(errno));
+			}
+		}
+
 		child = fts_children(file_system,0);
 		if(errno != 0){
 			fprintf(stderr,"An error occured while reading the files in %s: %s\n",*dir_name,strerror(errno));
-	   	}
-		while(child){
-			fprintf(stdout,"%s\t",child->fts_name);
+		}
+		while(child && (child->fts_info)){
+			switch(child->fts_info){
+				case FTS_F:
+					if(!opts._a && (child->fts_name[0]=='.'))
+						break;
+					fprintf(stdout,"%s\t",child->fts_name);
+					break;
+				case FTS_D:
+					if(!opts._a && (child->fts_name[0]=='.'))
+						break;
+					fprintf(stdout,"%s\t",child->fts_name);
+					break;
+				default:
+					break;	
+				}
 			child = child->fts_link;
-		}	
-	}
+		}
+	}	
 	fprintf(stdout,"\n");
-	fts_close(file_system);
+	
+	if((fts_close(file_system)==-1)){
+		fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
+	}
 }
 
 int
@@ -123,8 +146,9 @@ start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
 		traverse(opts,default_directory);
 	} else if (arg_count==1){
 		traverse(opts,&arg_vector[0]);
-	} else { 
-	        for(int idx=0;idx<arg_count;idx++){
+	} else {
+	        int idx=0;	
+	        for(idx=0;idx<arg_count;idx++){
 			fprintf(stdout,"%s:\n",arg_vector[idx]);
 			traverse(opts,&arg_vector[arg_count]);
 		}
