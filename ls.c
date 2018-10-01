@@ -1,17 +1,17 @@
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <fts.h>
+#include <libgen.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <ctype.h>
-#include <sysexits.h>
-#include <stdbool.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fts.h>
 #include <string.h>
-#include <errno.h>
-#include <libgen.h>
+#include <sys/stat.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sysexits.h>
+#include <unistd.h>
 /* ls [ -AacCdFfhiklnqRrSstuwx1] */
 
 static void usage(void);
@@ -73,8 +73,8 @@ initialize(struct opts_holder *opts){
 void
 traverse(struct opts_holder opts,char * const *dir_name){
 	FTS* file_system = NULL;
-	FTSENT* parent = NULL;
 	FTSENT* child = NULL;
+	FTSENT* parent = NULL;
 	if(opts._a){
 		if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
 			fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
@@ -90,40 +90,21 @@ traverse(struct opts_holder opts,char * const *dir_name){
 			fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
 			exit(EXIT_FAILURE);
 		}
-	}	
+	}
 
-	
-	while((parent = fts_read(file_system)) != NULL){
-		if((parent->fts_level > -1) && (parent->fts_name[0] == '.')){
-			if((fts_set(file_system,parent,FTS_SKIP)==-1)){
-				fprintf(stderr,"Could not skip file %s:%s\n",parent->fts_name,strerror(errno));
-			}
-		}
+	if((parent = fts_read(file_system))==NULL){
+		fprintf(stderr,"could not read directory %s:%s\n",*dir_name,strerror(errno));
+	}
 
-		child = fts_children(file_system,0);
-		if(errno != 0){
-			fprintf(stderr,"An error occured while reading the files in %s: %s\n",*dir_name,strerror(errno));
-		}
-		while(child && (child->fts_info)){
-			switch(child->fts_info){
-				case FTS_F:
-					if(!opts._a && (child->fts_name[0]=='.'))
-						break;
-					fprintf(stdout,"%s\t",child->fts_name);
-					break;
-				case FTS_D:
-					if(!opts._a && (child->fts_name[0]=='.'))
-						break;
-					fprintf(stdout,"%s\t",child->fts_name);
-					break;
-				default:
-					break;	
-				}
+	child = fts_children(file_system, 0);
+
+	while(child && child->fts_info){
+		if(!opts._a && (child->fts_info == FTS_D) && (child->fts_name[0]=='.'))
 			child = child->fts_link;
-		}
-	}	
-	fprintf(stdout,"\n");
-	
+		printf("%s\n",child->fts_name);
+		child = child->fts_link;
+	}		
+
 	if((fts_close(file_system)==-1)){
 		fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
 	}
