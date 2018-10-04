@@ -13,7 +13,19 @@
 #include <sysexits.h>
 #include <unistd.h>
 /* ls [ -AacCdFfhiklnqRrSstuwx1] */
-
+/*
+ * PRINT OPTIONS
+ *  -C -> multi column
+ *  -F -> Display / after directory, * after executable, @ after symbolic link, % after whiteout, = after socket, | after FIFO
+ *  -s -> size displayed in human readable format with -s and -l, overrides -k. If both -k and -h are specified, the rightmost is considered
+ *  -l -> display long format
+ *  -n -> group and owner IDs are displayed numerically
+ *  -q -> non-printable characters as ?
+ *  LOGIC OPTIONS
+ *  -c -> use time when file status was last changed for sorting and printing
+ *  -f -> not sorted
+ *    
+*/
 static void usage(void);
 int compare(const FTSENT**,const FTSENT**);
 
@@ -48,7 +60,17 @@ initialize(struct opts_holder *opts){
 	opts->_A = false;
        	opts->_a = false;
 	opts->_c = false;
-	opts->_C = false;
+	if(isatty(1)){
+		opts->_C = true;
+		opts->_q = true;
+		opts->_w = false;
+		opts->_1 = false;
+	} else {
+		opts->_C = false;
+		opts->_q = false;
+		opts->_w = true;
+		opts->_1 = true;
+	}	
 	opts->_d = false;
 	opts->_F = false;
 	opts->_f = false;
@@ -57,17 +79,97 @@ initialize(struct opts_holder *opts){
 	opts->_k = false;
 	opts->_l = false;
 	opts->_n = false;
-	opts->_q = false;
 	opts->_R = false;
 	opts->_r = false;
 	opts->_S = false;
 	opts->_s = false;
 	opts->_t = false;
 	opts->_u = false;
-	opts->_w = false;
 	opts->_x = false;
-	opts->_1 = false;
 }
+
+int
+compare(const FTSENT** first,const FTSENT** second){
+	return (strcmp((*first)->fts_name,(*second)->fts_name));
+}
+
+void
+print_permissions(mode_t mode){
+    putchar((mode & S_IRUSR) ? 'r' : '-');
+    putchar((mode & S_IWUSR) ? 'w' : '-');
+    putchar((mode & S_IXUSR) ? 'x' : '-');
+    putchar((mode & S_IRGRP) ? 'r' : '-');
+    putchar((mode & S_IWGRP) ? 'w' : '-');
+    putchar((mode & S_IXGRP) ? 'x' : '-');
+    putchar((mode & S_IROTH) ? 'r' : '-');
+    putchar((mode & S_IWOTH) ? 'w' : '-');
+    putchar((mode & S_IXOTH) ? 'x' : '-');	
+}
+
+
+
+
+
+void
+print_file_mode(FTSENT *file){
+	struct stat fileStat;
+	fileStat = *(file->fts_statp);
+	switch (fileStat.st_mode & S_IFMT)
+	{
+		case S_IFREG: putchar('-'); break;
+		case S_IFDIR: putchar('d'); break;
+		case S_IFLNK: putchar('l'); break;
+		case S_IFCHR: putchar('c'); break;
+		case S_IFBLK: putchar('b'); break;
+		case S_IFSOCK: putchar('s'); break;
+		case S_IFIFO: putchar('f'); break;
+	}
+
+	switch(file->fts_info){
+		case FTS_W: putchar('w');break;
+	}
+	print_permissions(fileStat.st_mode);
+}
+
+void print_no_of_links(FTSENT *file){
+	struct stat fileStat;
+	fileStat = *(file->fts_statp);
+	fprintf(stdout," %d ",fileStat.st_nlink);	
+}
+
+void
+print_owner(FTSENT *file,struct opts_holder opts){
+	
+
+
+
+}
+
+void
+print_bytes(FTSENT *file,struct opts_holder opts){};
+
+void
+print_time(FTSENT *file,struct opts_holder opts){};
+
+void
+print_pathname(FTSENT *file){};
+
+void
+print_function(struct opts_holder opts,FTSENT *file){
+	if(opts._l){
+	//long format
+		print_file_mode(file);
+		print_no_of_links(file);
+		print_owner(file,opts);
+		print_bytes(file,opts);
+		print_time(file,opts);
+		print_pathname(file);
+		fprintf(stdout,"%s\n",file->fts_name);
+	} else {
+		fprintf(stdout,"%s\n",file->fts_name);
+	}
+}
+
 
 
 void
@@ -101,7 +203,7 @@ traverse(struct opts_holder opts,char * const *dir_name){
 	while(child && child->fts_info){
 		if(!opts._a && (child->fts_info == FTS_D) && (child->fts_name[0]=='.'))
 			child = child->fts_link;
-		printf("%s\n",child->fts_name);
+		print_function(opts,child);		
 		child = child->fts_link;
 	}		
 
@@ -109,14 +211,6 @@ traverse(struct opts_holder opts,char * const *dir_name){
 		fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
 	}
 }
-
-int
-compare(const FTSENT** first,const FTSENT** second){
-	return (strcmp((*first)->fts_name,(*second)->fts_name));
-}
-
-
-
 
 
 
