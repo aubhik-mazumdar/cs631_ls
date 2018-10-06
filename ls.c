@@ -109,7 +109,7 @@ traverse(struct opts_holder opts,char * const *dir_name){
 
 
     while(child && child->fts_info){
-        if(!opts._a && (child->fts_info == FTS_D) && (child->fts_name[0]=='.'))
+        if(!opts._a && (child->fts_info == FTS_D) && (strnlen(child->fts_name,2)==1 && child->fts_name[0]=='.'))
             child = child->fts_link;
         print_function(child,opts);		
         child = child->fts_link;
