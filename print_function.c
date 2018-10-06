@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <pwd.h>
 #include <grp.h>
+#include <time.h>
 #include "ls.h"
 #include "print_function.h"
 
@@ -42,37 +43,33 @@ print_file_mode(FTSENT *file){
     print_permissions(fileStat.st_mode);
 }
 
-void print_no_of_links(FTSENT *file){
-    struct stat fileStat;
-    fileStat = *(file->fts_statp);
-    fprintf(stdout," %2d ",fileStat.st_nlink);	
+void print_no_of_links(nlink_t fileLinks){
+    fprintf(stdout," %2d ",fileLinks);	
 }
 
 void
-print_owner(FTSENT *file,struct opts_holder opts){
-    struct stat fileStat;
+print_owner(uid_t fileUserId,gid_t fileGroupId,struct opts_holder opts){
     struct passwd *filePasswd;
     struct group *fileGroup;
     char *uname;
     char *gname;
-    fileStat = *(file->fts_statp);
     if(opts._n){
-        (void)printf(" %d ",fileStat.st_uid);
-        (void)printf(" %d ",fileStat.st_gid);
+        (void)printf(" %d ",fileUserId);
+        (void)printf(" %d ",fileGroupId);
     } else {
-        if((filePasswd = getpwuid(fileStat.st_uid)) == NULL){
+        if((filePasswd = getpwuid(fileUserId)) == NULL){
             uname = "NO_USER";
         } else {
             uname = filePasswd->pw_name;
         }
         
-        if((fileGroup = getgrgid(fileStat.st_gid)) == NULL){
+        if((fileGroup = getgrgid(fileGroupId)) == NULL){
             gname = "NO_GROUP";
         } else {
             gname = fileGroup->gr_name;
         }
         
-        (void)printf("%-11s %-6s",uname,gname);
+        (void)printf("%-11s%-6s",uname,gname);
     }
 }
 
@@ -90,27 +87,46 @@ human_readable(off_t bytes){
             dblBytes = bytes / 1024.0;
 
     }
+    if(i==0){
+        char *output = malloc(sizeof(char)*200);
+        (void)sprintf(output, "%d%s", (int)dblBytes, suffix[i]);
+        return output;
+    } else {
+        char *output = malloc(sizeof(char)*200);
+        (void)sprintf(output, "%.01lf%s", dblBytes, suffix[i]);
+        return output;
 
-    char *output = malloc(sizeof(char)*200);
-    (void)sprintf(output, "%.01lf%s", dblBytes, suffix[i]);
-    return output;
+    }
 }
 
 void
-print_bytes(FTSENT *file,struct opts_holder opts){
-    struct stat fileStat;
+print_bytes(off_t fileSize,struct opts_holder opts){
     char * bytes;
-    fileStat = *(file->fts_statp);
     if(opts._h){
-        bytes = human_readable(fileStat.st_size);
+        bytes = human_readable(fileSize);
         (void)printf("%7s ",bytes);
     } else {
-        (void)printf("%7s ",bytes);
+        (void)printf("%7d ",fileSize);
     }
 };
 
 void
-print_time(FTSENT *file,struct opts_holder opts){};
+print_time(FTSENT *file,struct opts_holder opts){
+    struct stat fileStat;
+    char *timeString;
+    int i;
+    fileStat = *(file->fts_statp);
+    if(opts._c){
+        //last changed time
+        timeString = ctime(&fileStat.st_ctime);
+    } else {
+        timeString = ctime(&fileStat.st_mtime);
+    }
+    for(i=4;i<16;++i)
+       putchar(timeString[i]);
+    putchar(' ');
+}
+
 
 void
 print_pathname(FTSENT *file){
@@ -119,11 +135,13 @@ print_pathname(FTSENT *file){
 
 void
 print_function(FTSENT *file,struct opts_holder opts){
+    struct stat fileStat;
+    fileStat = *(file->fts_statp);
     if(opts._l){
         print_file_mode(file);
-        print_no_of_links(file);
-        print_owner(file,opts);
-        print_bytes(file,opts);
+        print_no_of_links(fileStat.st_nlink);
+        print_owner(fileStat.st_uid,fileStat.st_gid,opts);
+        print_bytes(fileStat.st_size,opts);
         print_time(file,opts);
         print_pathname(file);
     } else {
