@@ -1,6 +1,8 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <pwd.h>
+#include <grp.h>
 #include <fts.h>
 #include <libgen.h>
 #include <stdbool.h>
@@ -30,6 +32,37 @@
 static void usage(void);
 int compare(const FTSENT**,const FTSENT**);
 
+struct ll {
+    FTSENT *data;
+    struct ll *next;
+};
+
+typedef struct ll *node;
+
+node 
+create(){
+    node temp_node;
+    temp_node = (node)malloc(sizeof(struct ll));
+    temp_node->next = NULL;
+    return temp_node;
+}
+
+node 
+addNode(node head, FTSENT *value){
+    node temp,p;
+    temp = create();
+    temp->data = value;
+    if(head == NULL)
+        head = temp;  
+    else{
+        p  = head;
+        while(p->next != NULL){
+            p = p->next;
+        }
+        p->next = temp;
+    }
+    return head;
+}
 
 static void
 initialize(struct opts_holder *opts){
@@ -69,6 +102,36 @@ compare(const FTSENT** first,const FTSENT** second){
     return (strcmp((*first)->fts_name,(*second)->fts_name));
 }
 
+void
+maximize(FTSENT *file,int *maxArray){
+    struct passwd *filePasswd;
+    struct group *fileGroup;
+    struct stat fileStat;
+    char *uname;
+    char *gname;
+    fileStat = *(file->fts_statp);
+    if((filePasswd = getpwuid(fileStat.st_uid)) != NULL){
+        uname = filePasswd->pw_name;
+        if((int)strlen(uname)>maxArray[0]){
+            maxArray[0] = (int)strlen(uname);
+        }
+    }
+    
+    if((fileGroup = getgrgid(fileStat.st_gid)) != NULL){
+        gname = fileGroup->gr_name;
+        if((int)strlen(gname)>maxArray[1]){
+            maxArray[0] = (int)strlen(gname);
+        }  
+    }
+    
+    if(fileStat.st_size>maxArray[2])
+        maxArray[2] = (int)fileStat.st_size;
+
+    if((int)strlen(file->fts_name)>maxArray[3]){
+        maxArray[3] = (int)strlen(file->fts_name);
+    }
+}
+
 
 
 void
@@ -76,6 +139,9 @@ traverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
     FTSENT* child = NULL;
     FTSENT* parent = NULL;
+    FTSENT *temp = NULL;
+    int max[4] = {0};
+    struct stat readStat;
     if(opts._a){
         if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
@@ -91,7 +157,15 @@ traverse(struct opts_holder opts,char * const *dir_name){
     if((parent = fts_read(file_system))==NULL){
         fprintf(stderr,"could not read directory %s:%s\n",*dir_name,strerror(errno));
     }
+    if(opts._l){
+        if(stat(*dir_name,&readStat)==-1){
+            fprintf(stderr,"stat error on %s: %s\n",*dir_name,strerror(errno));
+            exit(EXIT_FAILURE);
+        } else {
+            printf("total %ld\n",readStat.st_blocks);
+        }
 
+    }
     if(parent->fts_info == FTS_F){
         print_function(parent,opts);
         exit(EXIT_SUCCESS);
@@ -101,13 +175,24 @@ traverse(struct opts_holder opts,char * const *dir_name){
         fprintf(stderr,"CHILD ERROR: %s",strerror(errno));
     };
 
-
+    node head = NULL;
     while(child && child->fts_info){
-        if(!opts._a && (child->fts_info == FTS_D) && (strnlen(child->fts_name,2)==1 && child->fts_name[0]=='.'))
+        if(!opts._a && (child->fts_info == FTS_D) && (strnlen(child->fts_name,2)==1 && child->fts_name[0]=='.')){
             child = child->fts_link;
-        print_function(child,opts);		
+            continue;
+        }
+        head = addNode(head,child);
         child = child->fts_link;
-    }		
+    }
+    while(head != NULL){
+        temp = head->data;
+        maximize(temp,max);
+        printf("%s\n",temp->fts_name);
+        head = head->next;
+    }
+    int i;
+    for(i=0;i<4;i++)
+        printf("%d\n",max[i]);
 
     if((fts_close(file_system)==-1)){
         fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
