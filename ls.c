@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <sys/stat.h>
 #include <sys/types.h>
 #include <sysexits.h>
 #include <unistd.h>
@@ -82,11 +81,6 @@ traverse(struct opts_holder opts,char * const *dir_name){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
             exit(EXIT_FAILURE);
         }
-    } else if(opts._A){
-        if((file_system = fts_open(dir_name,FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
-            fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
-            exit(EXIT_FAILURE);
-        }
     } else {
         if((file_system = fts_open(dir_name,FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
@@ -124,16 +118,26 @@ traverse(struct opts_holder opts,char * const *dir_name){
 
 void
 start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
+    int idx;
+    struct stat fileStat;
     if (arg_count==0){
         char * const default_directory[] = { ".", NULL};
         traverse(opts,default_directory);
     } else if (arg_count==1){
-        traverse(opts,&arg_vector[0]);
+        if(stat(arg_vector[0],&fileStat)==-1){
+            fprintf(stderr,"%s: %s: %s\n",getprogname(),arg_vector[0],strerror(errno));
+            exit(EXIT_FAILURE);
+        } else 
+            traverse(opts,&arg_vector[0]);
     } else {
-        int idx=0;	
         for(idx=0;idx<arg_count;idx++){
-            fprintf(stdout,"%s:\n",arg_vector[idx]);
-            traverse(opts,&arg_vector[arg_count]);
+            if(stat(arg_vector[idx],&fileStat)==-1){
+                fprintf(stderr,"%s: %s: %s\n",getprogname(),arg_vector[idx],strerror(errno));
+                continue;
+            } else {
+                fprintf(stdout,"%s:\n",arg_vector[idx]);
+                traverse(opts,&arg_vector[arg_count]);
+            }
         }
     }
 }
@@ -142,7 +146,7 @@ start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
 
 
 int
-main(int argc, char * const *argv){
+main(int argc, char **argv){
     int c;
     struct opts_holder opts; 
     initialize(&opts);
@@ -232,4 +236,3 @@ usage(void){
     (void)fprintf(stderr,"usage: %s [-AacCdFfhiklnqRrSstuwx1] [file ...]\n",getprogname()); 
     exit(EX_USAGE);
 }
-
