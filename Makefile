@@ -1,6 +1,6 @@
 OG=ls
 OBJS=ls.o print_function.o
-CFLAGS=-Wall -Werror -Wall -Werror -Wextra
+CFLAGS=-Wall -Werror -Wall -Werror -Wextra -lm -g
 CC=cc
 
 $(OG): $(OBJS)

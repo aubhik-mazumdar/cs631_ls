@@ -2,6 +2,9 @@
 #define _LS_H
 #include <ctype.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fts.h>
 struct opts_holder{
 	bool _A;
 	bool _a;
@@ -26,5 +29,13 @@ struct opts_holder{
 	bool _x;
 	bool _1;
 };
+
+struct ll {
+    FTSENT *data;
+    struct ll *next;
+};
+
+typedef struct ll *node;
+
 
 #endif

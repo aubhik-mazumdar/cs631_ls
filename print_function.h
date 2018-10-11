@@ -3,6 +3,6 @@
 #include "ls.h"
 
 void
-print_function(FTSENT *,struct opts_holder);
+print_function(node head,struct opts_holder,int *max);
 
 #endif

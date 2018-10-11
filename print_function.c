@@ -13,7 +13,6 @@
 #include <string.h>
 #include "ls.h"
 #include "print_function.h"
-
 void
 print_permissions(mode_t mode){
     char modeString[12];
@@ -27,14 +26,16 @@ void print_no_of_links(nlink_t fileLinks){
 }
 
 void
-print_owner(uid_t fileUserId,gid_t fileGroupId,struct opts_holder opts){
+print_owner(uid_t fileUserId,gid_t fileGroupId,struct opts_holder opts,int *max){
     struct passwd *filePasswd;
     struct group *fileGroup;
     char *uname;
     char *gname;
+    if(max[1] > 150 || max[2]>150)
+        printf("TOO LONG\n");
     if(opts._n){
-        (void)printf("%-4d ",fileUserId);
-        (void)printf(" %-4d",fileGroupId);
+        (void)printf("%d ",fileUserId);
+        (void)printf(" %d",fileGroupId);
     } else {
         if((filePasswd = getpwuid(fileUserId)) == NULL){
             uname = "NO_USER";
@@ -48,23 +49,25 @@ print_owner(uid_t fileUserId,gid_t fileGroupId,struct opts_holder opts){
             gname = fileGroup->gr_name;
         }
         
-        (void)printf("%-11s%-6s",uname,gname);
+        (void)printf("%s %s",uname,gname);
     }
 }
 
 void
-print_bytes(off_t fileSize,struct opts_holder opts){
+print_bytes(off_t fileSize,struct opts_holder opts,int *max){
     char bytes[5];
     int64_t actual_size = (int64_t)fileSize;
+    int maxBytesLength;
+    maxBytesLength = max[2] + 1;
     if(opts._h){
         if(humanize_number(bytes,5,actual_size,"",HN_AUTOSCALE,HN_DECIMAL | HN_NOSPACE | HN_B)==-1){
-            printf("%7ld ",fileSize);
+            printf("%*ld ",maxBytesLength,fileSize);
         } else
-            (void)printf("%5s ",bytes);
+            (void)printf("%*s ",maxBytesLength,bytes);
     } else {
-        (void)printf("%7ld ",fileSize);
+        (void)printf("%*ld ",maxBytesLength,fileSize);
     }
-};
+}
 
 void
 print_time(FTSENT *file,struct opts_holder opts){
@@ -122,18 +125,23 @@ print_pathname(FTSENT *file,struct opts_holder opts){
 }
 
 void
-print_function(FTSENT *file,struct opts_holder opts){
+print_function(node head,struct opts_holder opts,int *max){
     struct stat fileStat;
-    fileStat = *(file->fts_statp);
-    if(opts._l){
-        print_permissions(fileStat.st_mode);
-        print_no_of_links(fileStat.st_nlink);
-        print_owner(fileStat.st_uid,fileStat.st_gid,opts);
-        print_bytes(fileStat.st_size,opts);
-        print_time(file,opts);
-        print_pathname(file,opts);
-    } else {
-        print_pathname(file,opts);
+    FTSENT *file;
+    while(head != NULL){
+        file = head->data;
+        fileStat = *(file->fts_statp);
+        if(opts._l){
+            print_permissions(fileStat.st_mode);
+            print_no_of_links(fileStat.st_nlink);
+            print_owner(fileStat.st_uid,fileStat.st_gid,opts,max);
+            print_bytes(fileStat.st_size,opts,max);
+            print_time(file,opts);
+            print_pathname(file,opts);
+        } else {
+            print_pathname(file,opts);
+        }
+        head = head->next;
     }
 }
 

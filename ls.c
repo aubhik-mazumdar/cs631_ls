@@ -13,6 +13,7 @@
 #include <sys/types.h>
 #include <sysexits.h>
 #include <unistd.h>
+#include <math.h>
 #include "ls.h"
 #include "print_function.h"
 /* ls [ -AacCdFfhiklnqRrSstuwx1] */
@@ -31,14 +32,6 @@
  */
 static void usage(void);
 int compare(const FTSENT**,const FTSENT**);
-
-struct ll {
-    FTSENT *data;
-    struct ll *next;
-};
-
-typedef struct ll *node;
-
 node 
 create(){
     node temp_node;
@@ -103,29 +96,53 @@ compare(const FTSENT** first,const FTSENT** second){
 }
 
 void
-maximize(FTSENT *file,int *maxArray){
+maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
     struct passwd *filePasswd;
     struct group *fileGroup;
     struct stat fileStat;
+    int temp;
     char *uname;
     char *gname;
+    char bytes[5];
     fileStat = *(file->fts_statp);
-    if((filePasswd = getpwuid(fileStat.st_uid)) != NULL){
-        uname = filePasswd->pw_name;
-        if((int)strlen(uname)>maxArray[0]){
-            maxArray[0] = (int)strlen(uname);
+    
+    if(opts._n){
+        if((int)fileStat.st_uid > maxArray[0]){
+            maxArray[0] = floor(log10(fabs((int)fileStat.st_uid))) + 1;
+        }
+    } else {
+        if((filePasswd = getpwuid(fileStat.st_uid)) != NULL){
+            uname = filePasswd->pw_name;
+            if((int)strlen(uname)>maxArray[0]){
+                maxArray[0] = (int)strlen(uname);
+            }
+        }
+    }
+
+    if(opts._n){
+        temp = floor(log10(fabs((int)fileStat.st_gid))) + 1;
+        if(temp > maxArray[1]){
+            maxArray[1] = temp;
+        }
+    } else {
+        if((fileGroup = getgrgid(fileStat.st_gid)) != NULL){
+            gname = fileGroup->gr_name;
+            if((int)strlen(gname) > maxArray[1]){
+                maxArray[1] = (int)strlen(gname);
+            }  
         }
     }
     
-    if((fileGroup = getgrgid(fileStat.st_gid)) != NULL){
-        gname = fileGroup->gr_name;
-        if((int)strlen(gname)>maxArray[1]){
-            maxArray[0] = (int)strlen(gname);
-        }  
+    if(opts._h){
+        if(humanize_number(bytes,5,(int64_t)fileStat.st_size,"",HN_AUTOSCALE,HN_DECIMAL | HN_NOSPACE | HN_B)!=-1){
+            if((int)strlen(bytes) > maxArray[2])
+                maxArray[2] = (int)strlen(bytes);
+        }
+    } else {
+        temp = floor(log10(fabs(fileStat.st_size))) + 1;
+        if(temp > maxArray[2])
+            maxArray[2] = temp;
     }
-    
-    if(fileStat.st_size>maxArray[2])
-        maxArray[2] = (int)fileStat.st_size;
 
     if((int)strlen(file->fts_name)>maxArray[3]){
         maxArray[3] = (int)strlen(file->fts_name);
@@ -139,7 +156,7 @@ traverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
     FTSENT* child = NULL;
     FTSENT* parent = NULL;
-    FTSENT *temp = NULL;
+    node head = NULL;
     int max[4] = {0};
     struct stat readStat;
     if(opts._a){
@@ -164,10 +181,11 @@ traverse(struct opts_holder opts,char * const *dir_name){
         } else {
             printf("total %ld\n",readStat.st_blocks);
         }
-
     }
+
     if(parent->fts_info == FTS_F){
-        print_function(parent,opts);
+        head = addNode(head,parent);
+        print_function(head,opts,max);
         exit(EXIT_SUCCESS);
     }
     /*add error handling*/
@@ -175,28 +193,24 @@ traverse(struct opts_holder opts,char * const *dir_name){
         fprintf(stderr,"CHILD ERROR: %s",strerror(errno));
     };
 
-    node head = NULL;
     while(child && child->fts_info){
         if(!opts._a && (child->fts_info == FTS_D) && (strnlen(child->fts_name,2)==1 && child->fts_name[0]=='.')){
             child = child->fts_link;
             continue;
         }
         head = addNode(head,child);
+        maximize(child,max,opts);
         child = child->fts_link;
     }
-    while(head != NULL){
-        temp = head->data;
-        maximize(temp,max);
-        printf("%s\n",temp->fts_name);
-        head = head->next;
-    }
-    int i;
-    for(i=0;i<4;i++)
-        printf("%d\n",max[i]);
-
+    
     if((fts_close(file_system)==-1)){
         fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
     }
+    /*for(int i=0;i<4;i++)
+        printf("%d\n",max[i]);
+    exit(EXIT_SUCCESS);
+    */
+    print_function(head,opts,max);
 }
 
 
