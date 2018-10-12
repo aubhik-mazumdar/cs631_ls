@@ -178,7 +178,43 @@ maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
 }
 
 
+void
+Rtraverse(struct opts_holder opts,char * const *dir_name){
+    FTS* file_system = NULL;
+    FTSENT* parent = NULL;
+    FTSENT *child = NULL;
+    if(opts._l)
+        printf("No long format\n");
+    file_system = fts_open(dir_name,FTS_COMFOLLOW | FTS_NOCHDIR,&compare);
 
+    if (file_system != NULL)
+    {
+        if((parent = fts_read(file_system)) == NULL )
+            printf("ERROR\n");
+        while((parent = fts_read(file_system)))
+        {
+            switch(parent->fts_info){
+                case FTS_F:
+                    printf("%s\n",parent->fts_name);break;
+                case FTS_D:
+                    printf("\n%s\n",parent->fts_path);
+                    child = fts_children(file_system,0);
+                    while(child != NULL){
+                        printf("%s\n",child->fts_name);
+                        child = child->fts_link;
+                    }
+                    break;
+                case FTS_DP:
+                    fts_set(file_system,parent,FTS_SKIP);
+                    break;
+                default:
+                    fts_set(file_system,parent,FTS_SKIP);
+                    break;
+            }
+        }
+        fts_close(file_system);
+    }
+}
 void
 traverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
@@ -257,13 +293,20 @@ start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
     struct stat fileStat;
     if (arg_count==0){
         char * const default_directory[] = { ".", NULL};
-        traverse(opts,default_directory);
+        if(opts._R)
+            Rtraverse(opts,default_directory);
+        else
+            traverse(opts,default_directory);
     } else if (arg_count==1){
         if(stat(arg_vector[0],&fileStat)==-1){
             fprintf(stderr,"%s: %s: %s\n",getprogname(),arg_vector[0],strerror(errno));
             exit(EXIT_FAILURE);
-        } else 
-            traverse(opts,&arg_vector[0]);
+        } else{
+            if(opts._R){
+                traverse(opts,&arg_vector[0]);
+            }else
+                Rtraverse(opts,&arg_vector[0]);
+        }
     } else {
         for(idx=0;idx<arg_count;idx++){
             if(stat(arg_vector[idx],&fileStat)==-1){
@@ -271,7 +314,10 @@ start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
                 continue;
             } else {
                 fprintf(stdout,"%s:\n",arg_vector[idx]);
-                traverse(opts,&arg_vector[arg_count]);
+                if(opts._R){
+                    Rtraverse(opts,&arg_vector[idx]);
+                } else 
+                    traverse(opts,&arg_vector[idx]);
             }
         }
     }
