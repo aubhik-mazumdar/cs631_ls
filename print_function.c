@@ -22,34 +22,32 @@ print_permissions(mode_t mode){
 
 
 void print_no_of_links(nlink_t fileLinks){
-    fprintf(stdout,"%2d ",fileLinks);	
+    printf("%2d ",fileLinks);	
 }
 
 void
 print_owner(uid_t fileUserId,gid_t fileGroupId,struct opts_holder opts,int *max){
-    struct passwd *filePasswd;
-    struct group *fileGroup;
-    char *uname;
-    char *gname;
-    if(max[1] > 150 || max[2]>150)
-        printf("TOO LONG\n");
+    struct passwd *filePasswd = NULL;
+    struct group *fileGroup = NULL;
+    int userLen;
+    int groupLen;
+    userLen = max[0] + 1;
+    groupLen = max[1] + 1;
     if(opts._n){
-        (void)printf("%d ",fileUserId);
-        (void)printf(" %d",fileGroupId);
+        (void)printf("%-*d ",userLen,fileUserId);
+        (void)printf("%-*d",groupLen,fileGroupId);
     } else {
-        if((filePasswd = getpwuid(fileUserId)) == NULL){
-            uname = "NO_USER";
+        if((filePasswd = getpwuid(fileUserId)) != NULL){
+            (void)printf("%-*s ",userLen,filePasswd->pw_name);
         } else {
-            uname = filePasswd->pw_name;
+            (void)printf("%-*d ",userLen,fileUserId);
         }
         
-        if((fileGroup = getgrgid(fileGroupId)) == NULL){
-            gname = "NO_GROUP";
+        if((fileGroup = getgrgid(fileGroupId)) !=  NULL){
+            (void)printf("%-*s",groupLen,fileGroup->gr_name);
         } else {
-            gname = fileGroup->gr_name;
+            (void)printf("%-*d",groupLen,fileGroupId);
         }
-        
-        (void)printf("%s %s",uname,gname);
     }
 }
 
@@ -76,10 +74,9 @@ print_time(FTSENT *file,struct opts_holder opts){
     int i;
     fileStat = *(file->fts_statp);
     if(opts._c){
-        //last changed time
         if((timeString = ctime(&fileStat.st_ctime)) == NULL){
             timeString = (char *)fileStat.st_ctime;
-        };
+        }
     } else {
         timeString = ctime(&fileStat.st_mtime);
     }
@@ -130,7 +127,15 @@ print_function(node head,struct opts_holder opts,int *max){
     FTSENT *file;
     while(head != NULL){
         file = head->data;
-        fileStat = *(file->fts_statp);
+        if(file->fts_statp){
+            fileStat = *(file->fts_statp);
+        } else {
+            if(stat(file->fts_name,&fileStat) == -1){
+                head = head->next;
+                continue;
+            }
+        }       
+
         if(opts._l){
             print_permissions(fileStat.st_mode);
             print_no_of_links(fileStat.st_nlink);
@@ -144,6 +149,3 @@ print_function(node head,struct opts_holder opts,int *max){
         head = head->next;
     }
 }
-
-
-

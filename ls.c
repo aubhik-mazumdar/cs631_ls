@@ -59,7 +59,10 @@ addNode(node head, FTSENT *value){
 
 static void
 initialize(struct opts_holder *opts){
-    opts->_A = false;
+    if(getuid()==0)
+        opts->_A = true;
+    else
+        opts->_A = false;
     opts->_a = false;
     opts->_c = false;
     if(isatty(1)){
@@ -107,8 +110,15 @@ maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
     fileStat = *(file->fts_statp);
     
     if(opts._n){
-        if((int)fileStat.st_uid > maxArray[0]){
-            maxArray[0] = floor(log10(fabs((int)fileStat.st_uid))) + 1;
+        temp = floor(log10(fabs((int)fileStat.st_uid))) + 1;
+
+        if(temp > maxArray[0]){
+            maxArray[0] = temp;
+        }
+
+        temp = floor(log10(fabs((int)fileStat.st_gid))) + 1;
+        if(temp > maxArray[1]){
+            maxArray[1] = temp;
         }
     } else {
         if((filePasswd = getpwuid(fileStat.st_uid)) != NULL){
@@ -117,22 +127,16 @@ maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
                 maxArray[0] = (int)strlen(uname);
             }
         }
-    }
-
-    if(opts._n){
-        temp = floor(log10(fabs((int)fileStat.st_gid))) + 1;
-        if(temp > maxArray[1]){
-            maxArray[1] = temp;
-        }
-    } else {
+        
         if((fileGroup = getgrgid(fileStat.st_gid)) != NULL){
             gname = fileGroup->gr_name;
             if((int)strlen(gname) > maxArray[1]){
                 maxArray[1] = (int)strlen(gname);
             }  
         }
+
     }
-    
+
     if(opts._h){
         if(humanize_number(bytes,5,(int64_t)fileStat.st_size,"",HN_AUTOSCALE,HN_DECIMAL | HN_NOSPACE | HN_B)!=-1){
             if((int)strlen(bytes) > maxArray[2])
@@ -156,9 +160,11 @@ traverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
     FTSENT* child = NULL;
     FTSENT* parent = NULL;
+    FTSENT *p = NULL;
     node head = NULL;
+    char * blockString;
+    long blocksize = 0;
     int max[4] = {0};
-    struct stat readStat;
     if(opts._a){
         if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
@@ -175,42 +181,41 @@ traverse(struct opts_holder opts,char * const *dir_name){
         fprintf(stderr,"could not read directory %s:%s\n",*dir_name,strerror(errno));
     }
     if(opts._l){
-        if(stat(*dir_name,&readStat)==-1){
-            fprintf(stderr,"stat error on %s: %s\n",*dir_name,strerror(errno));
-            exit(EXIT_FAILURE);
-        } else {
-            printf("total %ld\n",readStat.st_blocks);
+        if(opts._h){
+            blockString = getbsize(NULL,NULL);
+            printf("total %s\n",blockString);
+        }
+        else{
+            blockString = getbsize(NULL,&blocksize);
+            printf("total %ld\n",blocksize);
         }
     }
-
     if(parent->fts_info == FTS_F){
         head = addNode(head,parent);
         print_function(head,opts,max);
         exit(EXIT_SUCCESS);
     }
-    /*add error handling*/
+    
     if((child = fts_children(file_system, 0))==NULL){
         fprintf(stderr,"CHILD ERROR: %s",strerror(errno));
-    };
-
-    while(child && child->fts_info){
-        if(!opts._a && (child->fts_info == FTS_D) && (strnlen(child->fts_name,2)==1 && child->fts_name[0]=='.')){
-            child = child->fts_link;
-            continue;
-        }
-        head = addNode(head,child);
-        maximize(child,max,opts);
-        child = child->fts_link;
     }
+    for(p=child;p;p = p->fts_link){
+        if(!opts._A && !opts._a){
+            if(p->fts_name[0]=='.'){
+                p = p->fts_link;
+                continue;
+            }
+        }
+        head = addNode(head,p);
+        maximize(p,max,opts);
+    }
+    
+    
+    print_function(head,opts,max);
     
     if((fts_close(file_system)==-1)){
         fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
     }
-    /*for(int i=0;i<4;i++)
-        printf("%d\n",max[i]);
-    exit(EXIT_SUCCESS);
-    */
-    print_function(head,opts,max);
 }
 
 
