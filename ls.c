@@ -32,6 +32,19 @@
  */
 static void usage(void);
 int compare(const FTSENT**,const FTSENT**);
+
+void
+delete_list(node head){
+    node temp;
+    while(head->next != NULL){
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+    free(head);
+}
+
+
 node 
 create(){
     node temp_node;
@@ -185,30 +198,29 @@ Rtraverse(struct opts_holder opts,char * const *dir_name){
     FTSENT *child = NULL;
     if(opts._l)
         printf("No long format\n");
-    file_system = fts_open(dir_name,FTS_COMFOLLOW | FTS_NOCHDIR,&compare);
+    file_system = fts_open(dir_name, FTS_NOCHDIR,&compare);
 
     if (file_system != NULL)
     {
+        /*
         if((parent = fts_read(file_system)) == NULL )
             printf("ERROR\n");
+        */
         while((parent = fts_read(file_system)))
         {
             switch(parent->fts_info){
-                case FTS_F:
-                    printf("%s\n",parent->fts_name);break;
                 case FTS_D:
-                    printf("\n%s\n",parent->fts_path);
+                    if(opts._a && parent->fts_level != 0 && parent->fts_name[0] == '.')
+                        break;
+
+                    if(parent->fts_name != '.' && parent->fts_name != "..")
+                        printf("\n%s:\n",parent->fts_path);
+                    
                     child = fts_children(file_system,0);
                     while(child != NULL){
                         printf("%s\n",child->fts_name);
                         child = child->fts_link;
                     }
-                    break;
-                case FTS_DP:
-                    fts_set(file_system,parent,FTS_SKIP);
-                    break;
-                default:
-                    fts_set(file_system,parent,FTS_SKIP);
                     break;
             }
         }
@@ -257,6 +269,7 @@ traverse(struct opts_holder opts,char * const *dir_name){
             printf("total %ld\n",blocksize);
         }
     }
+
     if(parent->fts_info == FTS_F){
         head = addNode(head,parent);
         print_function(head,opts,max);
@@ -303,9 +316,9 @@ start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
             exit(EXIT_FAILURE);
         } else{
             if(opts._R){
-                traverse(opts,&arg_vector[0]);
-            }else
                 Rtraverse(opts,&arg_vector[0]);
+            }else
+                traverse(opts,&arg_vector[0]);
         }
     } else {
         for(idx=0;idx<arg_count;idx++){
