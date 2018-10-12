@@ -94,7 +94,31 @@ initialize(struct opts_holder *opts){
 }
 
 int
-compare(const FTSENT** first,const FTSENT** second){
+compare_c(const FTSENT ** first,const FTSENT **second){
+    struct stat firstStat;
+    struct stat secondStat;
+
+    if((*first)->fts_statp){
+        firstStat = *((*first)->fts_statp);
+    }
+    else{
+        if(stat((*first)->fts_name,&firstStat)==-1)
+            return 0;
+    }
+
+    if((*second)->fts_statp){
+        secondStat = *((*second)->fts_statp);
+    }
+    else{
+        if(stat((*second)->fts_name,&secondStat)==-1)
+            return 0;
+    }
+
+    return firstStat.st_ctime > secondStat.st_ctime?1:-1;
+}
+
+int
+compare(const FTSENT** first,const FTSENT** second){   
     return (strcmp((*first)->fts_name,(*second)->fts_name));
 }
 
@@ -108,7 +132,7 @@ maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
     char *gname;
     char bytes[5];
     fileStat = *(file->fts_statp);
-    
+
     if(opts._n){
         temp = floor(log10(fabs((int)fileStat.st_uid))) + 1;
 
@@ -127,7 +151,7 @@ maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
                 maxArray[0] = (int)strlen(uname);
             }
         }
-        
+
         if((fileGroup = getgrgid(fileStat.st_gid)) != NULL){
             gname = fileGroup->gr_name;
             if((int)strlen(gname) > maxArray[1]){
@@ -166,6 +190,13 @@ traverse(struct opts_holder opts,char * const *dir_name){
     long blocksize = 0;
     int max[4] = {0};
     if(opts._a){
+        if(opts._c){
+            if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare_c)) == NULL){
+                fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
+                exit(EXIT_FAILURE);
+            }
+        }
+
         if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
             exit(EXIT_FAILURE);
@@ -195,7 +226,7 @@ traverse(struct opts_holder opts,char * const *dir_name){
         print_function(head,opts,max);
         exit(EXIT_SUCCESS);
     }
-    
+
     if((child = fts_children(file_system, 0))==NULL){
         fprintf(stderr,"CHILD ERROR: %s",strerror(errno));
     }
@@ -209,10 +240,10 @@ traverse(struct opts_holder opts,char * const *dir_name){
         head = addNode(head,p);
         maximize(p,max,opts);
     }
-    
-    
+
+
     print_function(head,opts,max);
-    
+
     if((fts_close(file_system)==-1)){
         fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
     }
@@ -266,9 +297,14 @@ main(int argc, char **argv){
                 break;
             case 'c':
                 opts._c = true;
+                opts._u = false;
                 break;
             case 'C':
                 opts._C = true;
+                opts._1 = false;
+                opts._l = false;
+                opts._n = false;
+                opts._x = false;
                 break;
             case 'd':
                 opts._d = true;
@@ -281,21 +317,31 @@ main(int argc, char **argv){
                 break;
             case 'h':
                 opts._h = true;
+                opts._k = false;
                 break;
             case 'i':
                 opts._i = true;
                 break;
             case 'k':
                 opts._k = true;
+                opts._h = false;
                 break;
             case 'l':
                 opts._l = true;
+                opts._1 = false;
+                opts._C = false;
+                opts._x = false;
                 break;
             case 'n':
                 opts._n = true;
+                opts._l = true;
+                opts._1 = false;
+                opts._C = false;
+                opts._x = false;
                 break;
             case 'q':
                 opts._q = true;
+                opts._w = false;
                 break;
             case 'R':
                 opts._R = true;
@@ -314,15 +360,25 @@ main(int argc, char **argv){
                 break;
             case 'u':
                 opts._u = true;
+                opts._c = false;
                 break;
             case 'w':
                 opts._w = true;
+                opts._q = false;
                 break;
             case 'x':
                 opts._x = true;
+                opts._1 = false;
+                opts._C = false;
+                opts._l = false;
+                opts._n = false;
                 break;
             case '1':
                 opts._1 = true;
+                opts._C = false;
+                opts._l = false;
+                opts._n = false;
+                opts._x = false;
                 break;
             case '?':
             default:

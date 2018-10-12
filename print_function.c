@@ -89,9 +89,22 @@ print_time(FTSENT *file,struct opts_holder opts){
 void
 print_pathname(FTSENT *file,struct opts_holder opts){
     char modeString[12];
+    int i;
+    int namelen;
+    char * name;
     struct stat fileStat;
+    name = file->fts_name;
     fileStat = *(file->fts_statp);
-    printf("%s",file->fts_name);
+    namelen = (int)file->fts_namelen;
+    if(opts._q){
+        for(i=0;i<namelen;i++){
+            if(isprint(name[i])==0)
+                putchar('?');
+            else
+                putchar(name[i]);
+        }
+    }
+
     strmode(fileStat.st_mode,modeString);
     if(opts._F){
         switch((char)modeString[0]){
@@ -135,7 +148,9 @@ print_function(node head,struct opts_holder opts,int *max){
                 continue;
             }
         }       
-
+        if(opts._i){
+            printf("%ld ",fileStat.st_ino);
+        }
         if(opts._l){
             print_permissions(fileStat.st_mode);
             print_no_of_links(fileStat.st_nlink);
