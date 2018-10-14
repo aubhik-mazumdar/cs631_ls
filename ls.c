@@ -30,18 +30,23 @@
  *  -f -> not sorted
  *    
  */
+
+#define FTS_OPTIONS_A FTS_PHYSICAL | FTS_NOCHDIR | FTS_SEEDOT | FTS_WHITEOUT
+#define FTS_OPTIONS FTS_PHYSICAL | FTS_NOCHDIR | FTS_WHITEOUT
+
+
 static void usage(void);
 int compare(const FTSENT**,const FTSENT**);
 
 void
 delete_list(node head){
     node temp;
-    while(head->next != NULL){
+    while(head != NULL){
         temp = head;
         head = head->next;
+        //printf("deleting node: %s",(temp->data)->fts_name);
         free(temp);
     }
-    free(head);
 }
 
 
@@ -183,50 +188,79 @@ maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
         temp = floor(log10(fabs(fileStat.st_size))) + 1;
         if(temp > maxArray[2])
             maxArray[2] = temp;
-    }
-
-    if((int)strlen(file->fts_name)>maxArray[3]){
-        maxArray[3] = (int)strlen(file->fts_name);
+    }    
+    
+    if(opts._h)
+        maxArray[3] += fileStat.st_size;
+    else
+        maxArray[3] += fileStat.st_blocks;
+    if(opts._s){
+        if(opts._h){
+            if(humanize_number(bytes,5,(int64_t)fileStat.st_size*512,"",HN_AUTOSCALE,HN_DECIMAL | HN_NOSPACE | HN_B)!= -1){
+                if((int)strlen(bytes) > maxArray[4])
+                    maxArray[4] = (int)strlen(bytes);
+            }
+        } else {
+            temp = floor(log10(fabs(fileStat.st_blocks))) + 1;
+            if(temp > maxArray[4]){
+                maxArray[4] = temp;
+            }
+        }
     }
 }
-
 
 void
 Rtraverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
     FTSENT* parent = NULL;
     FTSENT *child = NULL;
-    if(opts._l)
-        printf("No long format\n");
-    file_system = fts_open(dir_name, FTS_NOCHDIR,&compare);
-
+    
+    
+    if(opts._a)
+        file_system = fts_open(dir_name,FTS_OPTIONS_A ,&compare);
+    else
+        file_system = fts_open(dir_name,FTS_OPTIONS,&compare); 
+    
     if (file_system != NULL)
     {
-        /*
-        if((parent = fts_read(file_system)) == NULL )
-            printf("ERROR\n");
-        */
         while((parent = fts_read(file_system)))
         {
             switch(parent->fts_info){
+                case FTS_DC:
+                    fprintf(stderr,"directory is cyclic: %s\n",parent->fts_name);
+                    break;
                 case FTS_D:
                     if(opts._a && parent->fts_level != 0 && parent->fts_name[0] == '.')
                         break;
 
-                    if(parent->fts_name != '.' && parent->fts_name != "..")
+                    if(parent->fts_name[0] != '.' && strnlen(parent->fts_name,2)!=1)
                         printf("\n%s:\n",parent->fts_path);
-                    
+
+                    node head= NULL; 
+                    int max[5] = {0};
                     child = fts_children(file_system,0);
                     while(child != NULL){
-                        printf("%s\n",child->fts_name);
+                        if(!opts._A && !opts._a){
+                            if(child->fts_name[0]=='.'){
+                                child = child->fts_link;
+                                continue;
+                            }
+                        }
+                        head = addNode(head,child);
+                        maximize(child,max,opts);
                         child = child->fts_link;
                     }
+                    print_function(head,opts,max);
+                    delete_list(head);
+                    break;
+                default:
                     break;
             }
         }
         fts_close(file_system);
     }
 }
+
 void
 traverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
@@ -234,23 +268,14 @@ traverse(struct opts_holder opts,char * const *dir_name){
     FTSENT* parent = NULL;
     FTSENT *p = NULL;
     node head = NULL;
-    char * blockString;
-    long blocksize = 0;
-    int max[4] = {0};
+    int max[5] = {0};
     if(opts._a){
-        if(opts._c){
-            if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare_c)) == NULL){
-                fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        if((file_system = fts_open(dir_name,FTS_SEEDOT | FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
+        if((file_system = fts_open(dir_name,FTS_OPTIONS_A,&compare)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
             exit(EXIT_FAILURE);
         }
     } else {
-        if((file_system = fts_open(dir_name,FTS_LOGICAL | FTS_NOCHDIR,&compare)) == NULL){
+        if((file_system = fts_open(dir_name,FTS_OPTIONS,&compare)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
             exit(EXIT_FAILURE);
         }
@@ -258,16 +283,6 @@ traverse(struct opts_holder opts,char * const *dir_name){
 
     if((parent = fts_read(file_system))==NULL){
         fprintf(stderr,"could not read directory %s:%s\n",*dir_name,strerror(errno));
-    }
-    if(opts._l){
-        if(opts._h){
-            blockString = getbsize(NULL,NULL);
-            printf("total %s\n",blockString);
-        }
-        else{
-            blockString = getbsize(NULL,&blocksize);
-            printf("total %ld\n",blocksize);
-        }
     }
 
     if(parent->fts_info == FTS_F){
@@ -289,10 +304,9 @@ traverse(struct opts_holder opts,char * const *dir_name){
         head = addNode(head,p);
         maximize(p,max,opts);
     }
-
-
     print_function(head,opts,max);
-
+    delete_list(head);
+    
     if((fts_close(file_system)==-1)){
         fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
     }

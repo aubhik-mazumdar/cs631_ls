@@ -3,6 +3,6 @@
 #include "ls.h"
 
 void
-print_function(node head,struct opts_holder,int *max);
+print_function(node,struct opts_holder,int *);
 
 #endif
