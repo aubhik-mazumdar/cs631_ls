@@ -16,6 +16,7 @@
 #include <math.h>
 #include "ls.h"
 #include "print_function.h"
+#include "cmp.h"
 /* ls [ -AacCdFfhiklnqRrSstuwx1] */
 /*
  * PRINT OPTIONS
@@ -44,7 +45,6 @@ delete_list(node head){
     while(head != NULL){
         temp = head;
         head = head->next;
-        //printf("deleting node: %s",(temp->data)->fts_name);
         free(temp);
     }
 }
@@ -112,33 +112,44 @@ initialize(struct opts_holder *opts){
 }
 
 int
-compare_c(const FTSENT ** first,const FTSENT **second){
-    struct stat firstStat;
-    struct stat secondStat;
+(*get_compare(struct opts_holder opts))(const FTSENT **,const FTSENT **){
+    if(opts._f)
+        return NULL;
+    if(opts._t){
+        if(opts._c){
+            if(opts._r)
+                return &rctime_cmp;
+            else
+                return &ctime_cmp;
+        }
+        if(opts._t){
+            if(opts._r)
+                return &rmtime_cmp;
+            else
+                return &mtime_cmp;
+        }
+        if(opts._u){
+            if(opts._r)
+                return &ratime_cmp;
+            else
+                return &atime_cmp;
+        }
+    }
 
-    if((*first)->fts_statp){
-        firstStat = *((*first)->fts_statp);
+    if(opts._S){
+        if(opts._r)
+            return &rsize_cmp;
+        else
+            return &size_cmp;
     }
-    else{
-        if(stat((*first)->fts_name,&firstStat)==-1)
-            return 0;
-    }
-
-    if((*second)->fts_statp){
-        secondStat = *((*second)->fts_statp);
-    }
-    else{
-        if(stat((*second)->fts_name,&secondStat)==-1)
-            return 0;
-    }
-
-    return firstStat.st_ctime > secondStat.st_ctime?1:-1;
+    
+    if(opts._r)
+        return &rcompare;
+    else
+        return &compare;
+    
 }
 
-int
-compare(const FTSENT** first,const FTSENT** second){   
-    return (strcmp((*first)->fts_name,(*second)->fts_name));
-}
 
 void
 maximize(FTSENT *file,int *maxArray,struct opts_holder opts){
@@ -213,13 +224,15 @@ void
 Rtraverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
     FTSENT* parent = NULL;
-    FTSENT *child = NULL;
+    FTSENT *child = NULL; 
+    int (*comparefxn)(const FTSENT **,const FTSENT **);
     
+    comparefxn = get_compare(opts);
     
     if(opts._a)
-        file_system = fts_open(dir_name,FTS_OPTIONS_A ,&compare);
+        file_system = fts_open(dir_name,FTS_OPTIONS_A ,comparefxn);
     else
-        file_system = fts_open(dir_name,FTS_OPTIONS,&compare); 
+        file_system = fts_open(dir_name,FTS_OPTIONS,comparefxn); 
     
     if (file_system != NULL)
     {
@@ -267,15 +280,17 @@ traverse(struct opts_holder opts,char * const *dir_name){
     FTSENT* child = NULL;
     FTSENT* parent = NULL;
     FTSENT *p = NULL;
+    int (*comparefxn)(const FTSENT **,const FTSENT **);
     node head = NULL;
+    comparefxn = get_compare(opts);
     int max[5] = {0};
     if(opts._a){
-        if((file_system = fts_open(dir_name,FTS_OPTIONS_A,&compare)) == NULL){
+        if((file_system = fts_open(dir_name,FTS_OPTIONS_A,comparefxn)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
             exit(EXIT_FAILURE);
         }
     } else {
-        if((file_system = fts_open(dir_name,FTS_OPTIONS,&compare)) == NULL){
+        if((file_system = fts_open(dir_name,FTS_OPTIONS,comparefxn)) == NULL){
             fprintf(stderr,"could not open %s:%s\n",*dir_name,strerror(errno));
             exit(EXIT_FAILURE);
         }
@@ -285,16 +300,20 @@ traverse(struct opts_holder opts,char * const *dir_name){
         fprintf(stderr,"could not read directory %s:%s\n",*dir_name,strerror(errno));
     }
 
-    if(parent->fts_info == FTS_F){
+    if(parent->fts_info == FTS_F || opts._d){
+        opts._d = true;
         head = addNode(head,parent);
+        maximize(parent,max,opts);
         print_function(head,opts,max);
         exit(EXIT_SUCCESS);
     }
 
+
     if((child = fts_children(file_system, 0))==NULL){
         fprintf(stderr,"CHILD ERROR: %s",strerror(errno));
     }
-    for(p=child;p;p = p->fts_link){
+    p = child;
+    while(p){
         if(!opts._A && !opts._a){
             if(p->fts_name[0]=='.'){
                 p = p->fts_link;
@@ -303,7 +322,9 @@ traverse(struct opts_holder opts,char * const *dir_name){
         }
         head = addNode(head,p);
         maximize(p,max,opts);
+        p = p->fts_link;
     }
+
     print_function(head,opts,max);
     delete_list(head);
     
@@ -318,8 +339,8 @@ void
 start_scan(int arg_count,char * const *arg_vector,struct opts_holder opts){
     int idx;
     struct stat fileStat;
+    char * const default_directory[] = { ".", NULL};
     if (arg_count==0){
-        char * const default_directory[] = { ".", NULL};
         if(opts._R)
             Rtraverse(opts,default_directory);
         else
@@ -387,6 +408,7 @@ main(int argc, char **argv){
                 break;
             case 'f':
                 opts._f = true;
+                opts._a = true;
                 break;
             case 'h':
                 opts._h = true;

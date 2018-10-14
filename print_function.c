@@ -1,17 +1,17 @@
-#include <inttypes.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <sys/param.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 #include <fts.h>
+#include <grp.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pwd.h>
-#include <grp.h>
-#include <time.h>
-#include <limits.h>
-#include <errno.h>
-#include <unistd.h>
 #include <string.h>
+#include <time.h>
+#include <unistd.h>
 #include "ls.h"
 #include "print_function.h"
 #define MODE_STRLEN 12
@@ -114,7 +114,7 @@ print_pathname(FTSENT *file,struct opts_holder opts){
     fileStat = file->fts_statp;
     namelen = (int)file->fts_namelen;
     
-    if(opts._q){
+    if(opts._q && !opts._w){
         for(i=0;i<namelen;i++){
             if(isprint(name[i])==0)
                 putchar('?');
@@ -122,6 +122,8 @@ print_pathname(FTSENT *file,struct opts_holder opts){
                 putchar(name[i]);
         }
     }
+    if(opts._w)
+        printf("%s",name);
 
     (void)strmode(fileStat->st_mode,modeString);
     
@@ -182,7 +184,7 @@ print_function(node head,struct opts_holder opts,int *max){
     
     (void)getbsize(NULL,&blocksize);
     
-    if(opts._l || opts._s){
+    if(!opts._d && (opts._l || opts._s)){
         if(opts._h){
             temp = max[3];
             if(humanize_number(bytes,5,temp,"",HN_AUTOSCALE,HUMANIZE_FLAGS)!= -1){
@@ -205,6 +207,7 @@ print_function(node head,struct opts_holder opts,int *max){
             printf("total %ld\n",temp);
         }
     }
+
     while(p != NULL){
         file = p->data;
         if(file->fts_statp){
