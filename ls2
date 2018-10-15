@@ -1,0 +1,701 @@
+total 680
+-rw-r--r--  1 aubhikcr7  users     162 Oct 14 23:16 Makefile
+-rw-r--r--  1 aubhikcr7  users    5922 Oct 14 20:28 README
+-rw-r--r--  1 aubhikcr7  users    2683 Oct 14 23:26 cmp.c
+-rw-r--r--  1 aubhikcr7  users     536 Oct 14 23:14 cmp.h
+-rw-r--r--  1 aubhikcr7  users    9544 Oct 14 23:28 cmp.o
+drwxrwxrwx  3 aubhikcr7  users     512 Oct 12 13:21 dd
+-rwxr-xr-x  1 aubhikcr7  users   36496 Oct 15 01:21 ls
+-rw-r--r--  1 aubhikcr7  users   12854 Oct 15 01:20 ls.c
+-rw-------  1 aubhikcr7  users  181040 Oct 14 23:36 ls.core
+-rw-r--r--  1 aubhikcr7  users     463 Oct 12 08:09 ls.h
+-rw-r--r--  1 aubhikcr7  users   25728 Oct 15 01:21 ls.o
+-rw-r--r--  1 aubhikcr7  users   25153 Oct 15 01:21 ls1
+-rw-r--r--  1 aubhikcr7  users       0 Oct 15 01:22 ls2
+-rw-r--r--  1 aubhikcr7  users    7286 Oct 15 00:54 print_function.c
+-rw-r--r--  1 aubhikcr7  users     131 Oct 14 03:32 print_function.h
+-rw-r--r--  1 aubhikcr7  users   19048 Oct 15 00:54 print_function.o
+drwxr-xr-x  3 aubhikcr7  users    1024 Oct  9 19:38 testdir
+
+./.git/hooks:
+total 44
+-rwxr-xr-x  1 aubhikcr7  users   478 Oct  1 15:48 applypatch-msg.sample
+-rwxr-xr-x  1 aubhikcr7  users   896 Oct  1 15:48 commit-msg.sample
+-rwxr-xr-x  1 aubhikcr7  users   189 Oct  1 15:48 post-update.sample
+-rwxr-xr-x  1 aubhikcr7  users   424 Oct  1 15:48 pre-applypatch.sample
+-rwxr-xr-x  1 aubhikcr7  users  1642 Oct  1 15:48 pre-commit.sample
+-rwxr-xr-x  1 aubhikcr7  users  4902 Oct  1 15:48 pre-rebase.sample
+-rwxr-xr-x  1 aubhikcr7  users  1504 Oct  1 15:48 prepare-commit-msg.sample
+-rwxr-xr-x  1 aubhikcr7  users  3610 Oct  1 15:48 update.sample
+
+./.git/info:
+total 4
+-rw-r--r--  1 aubhikcr7  users  240 Oct  1 15:48 exclude
+
+./.git/logs:
+total 12
+-rw-r--r--  1 root  users  3454 Oct 14 23:59 HEAD
+drwxr-xr-x  4 root  users   512 Oct  1 16:14 refs
+
+./.git/logs/refs:
+total 8
+drwxr-xr-x  2 root  users  512 Oct  1 15:51 heads
+drwxr-xr-x  3 root  users  512 Oct  1 16:14 remotes
+
+./.git/logs/refs/heads:
+total 8
+-rw-r--r--  1 root  users  3454 Oct 14 23:59 master
+
+./.git/logs/refs/remotes:
+total 4
+drwxr-xr-x  2 root  users  512 Oct  1 16:14 origin
+
+./.git/logs/refs/remotes/origin:
+total 8
+-rw-r--r--  1 root  users  2528 Oct 14 23:59 master
+
+./.git/objects:
+total 440
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 00
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 02
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 04
+drwxr-xr-x  2 root       users  512 Oct 10 02:34 08
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 09
+drwxr-xr-x  2 root       users  512 Oct 12 12:06 0b
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 0c
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 0e
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 18:44 14
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 15
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 18
+drwxr-xr-x  2 root       users  512 Oct 14 21:32 1a
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 15:49 1e
+drwxr-xr-x  2 root       users  512 Oct 12 09:26 21
+drwxr-xr-x  2 root       users  512 Oct 10 04:40 23
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 27
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 12 09:26 28
+drwxr-xr-x  2 root       users  512 Oct 12 12:06 29
+drwxr-xr-x  2 root       users  512 Oct  4 23:58 2c
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 15:49 2d
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 30
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 31
+drwxr-xr-x  2 root       users  512 Oct 12 09:26 33
+drwxr-xr-x  2 root       users  512 Oct 12 14:16 35
+drwxr-xr-x  2 root       users  512 Oct 12 14:16 36
+drwxr-xr-x  2 root       users  512 Oct  5 20:55 37
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 3c
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 3d
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 3e
+drwxr-xr-x  2 root       users  512 Oct  1 20:39 3f
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 10 04:40 42
+drwxr-xr-x  2 root       users  512 Oct 12 10:32 43
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 12 09:26 46
+drwxr-xr-x  2 root       users  512 Oct  6 00:57 47
+drwxr-xr-x  2 root       users  512 Oct  5 20:55 49
+drwxr-xr-x  2 root       users  512 Oct  6 00:57 4c
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 4e
+drwxr-xr-x  2 root       users  512 Oct  4 23:58 50
+drwxr-xr-x  2 root       users  512 Oct 11 22:38 59
+drwxr-xr-x  2 root       users  512 Oct  6 01:52 5d
+drwxr-xr-x  2 root       users  512 Oct 12 10:32 5e
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 14 21:32 5f
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 12 09:26 60
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 61
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 62
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 12 10:31 63
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 67
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 68
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 6d
+drwxr-xr-x  2 root       users  512 Oct  1 15:51 72
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 73
+drwxr-xr-x  2 root       users  512 Oct  4 23:58 75
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 18:44 7b
+drwxr-xr-x  2 root       users  512 Oct 11 22:37 84
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 85
+drwxr-xr-x  2 root       users  512 Oct 14 21:32 89
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 8c
+drwxr-xr-x  2 root       users  512 Oct 10 02:34 90
+drwxr-xr-x  2 root       users  512 Oct  1 20:46 92
+drwxr-xr-x  2 root       users  512 Oct 12 12:06 94
+drwxr-xr-x  2 root       users  512 Oct  6 01:52 95
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 99
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 20:37 9d
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 9f
+drwxr-xr-x  2 root       users  512 Oct 11 22:38 a0
+drwxr-xr-x  2 root       users  512 Oct  4 23:58 a2
+drwxr-xr-x  2 root       users  512 Oct 10 04:40 a6
+drwxr-xr-x  2 root       users  512 Oct  6 00:57 a7
+drwxr-xr-x  2 root       users  512 Oct 12 14:16 a9
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 12 10:31 aa
+drwxr-xr-x  2 root       users  512 Oct 12 14:17 ab
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 ac
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 ad
+drwxr-xr-x  2 root       users  512 Oct 12 10:32 ae
+drwxr-xr-x  2 root       users  512 Oct 14 21:32 b1
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 15:49 b3
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 b5
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  4 23:58 b8
+drwxr-xr-x  2 root       users  512 Oct  6 00:57 b9
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 ba
+drwxr-xr-x  2 root       users  512 Oct 12 12:06 bb
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 18:44 bc
+drwxr-xr-x  2 root       users  512 Oct  6 01:52 bf
+drwxr-xr-x  2 root       users  512 Oct 11 22:38 cd
+drwxr-xr-x  2 root       users  512 Oct 12 14:17 cf
+drwxr-xr-x  2 root       users  512 Oct 12 09:26 d0
+drwxr-xr-x  2 root       users  512 Oct  5 20:55 d4
+drwxr-xr-x  2 root       users  512 Oct 14 21:31 d7
+drwxr-xr-x  2 root       users  512 Oct 12 09:26 d8
+drwxr-xr-x  2 root       users  512 Oct 12 14:17 d9
+drwxr-xr-x  2 root       users  512 Oct 12 12:06 da
+drwxr-xr-x  2 root       users  512 Oct  4 23:58 db
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 dc
+drwxr-xr-x  2 root       users  512 Oct  1 20:39 e0
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 18:44 e2
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 e3
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 11 22:37 e6
+drwxr-xr-x  2 root       users  512 Oct 10 04:42 eb
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 ec
+drwxr-xr-x  2 root       users  512 Oct 14 23:59 ef
+drwxr-xr-x  2 root       users  512 Oct 12 10:32 f0
+drwxr-xr-x  2 root       users  512 Oct 12 10:32 f1
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 f4
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 f7
+drwxr-xr-x  2 root       users  512 Oct  5 20:55 f8
+drwxr-xr-x  2 root       users  512 Oct  5 20:55 fb
+drwxr-xr-x  2 root       users  512 Oct  5 20:55 fc
+drwxr-xr-x  2 root       users  512 Oct 10 02:33 fe
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 15:48 info
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 15:48 pack
+
+./.git/objects/00:
+total 20
+-r--r--r--  1 root  users  8859 Oct 14 21:31 8be7ec96068aa8445ee30983cc746c8e836e8c
+
+./.git/objects/02:
+total 4
+-r--r--r--  1 root  users  1211 Oct 11 22:37 7ba150519cad0e7b42a0bf20232b52552b2626
+
+./.git/objects/04:
+total 4
+-r--r--r--  1 root  users  121 Oct 10 02:33 a3c5c66bcf817c03819c007115aa647486c2fb
+
+./.git/objects/08:
+total 4
+-r--r--r--  1 root  users  51 Oct 10 02:34 bfb9f158d71f4e965c90d61b47b7aab608ce15
+
+./.git/objects/09:
+total 4
+-r--r--r--  1 root  users  128 Oct 11 22:37 34da89c84ec8fac8c07edc7aea366b23548ece
+
+./.git/objects/0b:
+total 8
+-r--r--r--  1 root  users  3212 Oct 12 12:06 6a0a34610407b5f96377e12d453f414f76e76a
+
+./.git/objects/0c:
+total 4
+-r--r--r--  1 root  users  2048 Oct 14 23:59 953d04f2ae9b3b3900e1ab2d9729b3bdb085d0
+
+./.git/objects/0e:
+total 44
+-r--r--r--  1 root  users  22400 Oct 10 02:33 76d8b0f5312b3ce6c94fdb1322dd54145e80d6
+
+./.git/objects/14:
+total 4
+-r--r--r--  1 aubhikcr7  users  168 Oct  1 18:44 280b8ddd8d824992272a272a655f7dba12652b
+
+./.git/objects/15:
+total 4
+-r--r--r--  1 root  users  2021 Oct 14 21:31 2748676b072b824ca8e1b90b3cc9b661996b90
+
+./.git/objects/18:
+total 8
+-r--r--r--  1 root  users  137 Oct 14 23:59 4f3f2e5bbf5c7c29e54afb54c36ab95d01ca08
+-r--r--r--  1 root  users   60 Oct 12 14:17 a455029a02b49fd6458cc9d503d3f09eab0540
+
+./.git/objects/1a:
+total 4
+-r--r--r--  1 root  users  111 Oct 14 21:32 a66e1c67004c0b370af7e731460a918ba7e3bf
+
+./.git/objects/1e:
+total 12
+-r--r--r--  1 aubhikcr7  users  4393 Oct  1 15:49 c44231b3a579c224c88368a67a9241ff5d9ba3
+
+./.git/objects/21:
+total 4
+-r--r--r--  1 root  users  1202 Oct 12 09:26 42762ff6ee5f63b8b1a90d942a22e268e62025
+
+./.git/objects/23:
+total 12
+-r--r--r--  1 root  users  1770 Oct  6 00:57 83343bad21ed1bf9ab30e6d795e10b681639d3
+-r--r--r--  1 root  users  2507 Oct 10 04:40 b8961bddce7851dbbb4cd7109a244ebc351092
+
+./.git/objects/27:
+total 8
+-r--r--r--  1 root  users  475 Oct 14 23:59 754c0437a50cf5c585dd5c95df1be54acfaa9e
+-r--r--r--  1 root  users  339 Oct 10 02:34 d8a9c954b1fe0b515c2f2e128bc46f12eb8e7e
+
+./.git/objects/28:
+total 20
+-r--r--r--  1 root       users   185 Oct 12 09:26 45c3b037c6194c9611c4456d21e93b391fa1c3
+-r--r--r--  1 aubhikcr7  users  7051 Oct  1 20:37 e307031ce9281c183a17e52dc3a9f72132e712
+
+./.git/objects/29:
+total 4
+-r--r--r--  1 root  users  189 Oct 12 12:06 09cf3c7971019937f263e11ea23d7353153dfb
+
+./.git/objects/2c:
+total 4
+-r--r--r--  1 root  users  258 Oct  4 23:58 4086ebc0a4c42400aa1df1363f653786b27778
+
+./.git/objects/2d:
+total 4
+-r--r--r--  1 aubhikcr7  users  132 Oct  1 15:49 6601a51fade8b3721142d990471934782ef863
+
+./.git/objects/30:
+total 20
+-r--r--r--  1 root  users    20 Oct 10 02:33 d67d4672d5c05833b7192cc77a79eaafb5c7ad
+-r--r--r--  1 root  users  7810 Oct 11 22:37 e3335ee0336d7dd66e25caee376f79ba85c585
+
+./.git/objects/31:
+total 92
+-r--r--r--  1 root  users  44737 Oct 10 02:33 c2fe9b07d50d280ef5c5512da4ad7eef15b17a
+-r--r--r--  1 root  users    189 Oct  6 01:52 db501687955241a906530bdf0a97055219216d
+
+./.git/objects/33:
+total 16
+-r--r--r--  1 root  users  7824 Oct 12 09:26 de5b88410aadc7e191f66fe15b31d023f18d36
+
+./.git/objects/35:
+total 12
+-r--r--r--  1 root  users  3289 Oct 12 14:16 e4ac2f17f0cb6cc9437668e99b4be4d1768def
+-r--r--r--  1 root  users    16 Oct 10 02:33 ec3b9d7586b46c0fd3450ba21e30ef666cfcd6
+
+./.git/objects/36:
+total 40
+-r--r--r--  1 root  users  18799 Oct 12 14:16 d5e40d845dcef9c1350af01dcc7a240d8d02f4
+
+./.git/objects/37:
+total 12
+-r--r--r--  1 root  users  5374 Oct  5 20:55 e451005136aa179db9193d2b24014be729f452
+
+./.git/objects/3c:
+total 32
+-r--r--r--  1 root  users  15271 Oct 14 23:59 7bf13a5ba458fc9d142ede614571141224f4cc
+
+./.git/objects/3d:
+total 28
+-r--r--r--  1 root  users  14332 Oct 14 21:31 a68b0809a785123503376a353839869f13aa89
+
+./.git/objects/3e:
+total 4
+-r--r--r--  1 root  users  1087 Oct 10 02:33 9391710268821ea0252feb8264ae066d2e9e7c
+
+./.git/objects/3f:
+total 8
+-r--r--r--  1 root  users  168 Oct  1 20:39 ccf378919320f90477d95129675a16263a8887
+-r--r--r--  1 root  users  161 Oct  1 18:45 e200d06e8d5128b46c98490e3fde7dce4722ed
+
+./.git/objects/42:
+total 24
+-r--r--r--  1 root       users  6669 Oct 10 04:40 8675afb59862fc4cd1090c6ea8e5905f086cf0
+-r--r--r--  1 root       users   316 Oct  5 20:55 94e962b919f0468122d05953748c2236b81468
+-r--r--r--  1 aubhikcr7  users  1295 Oct  1 15:49 f54eb06f2849d924ad3f5d90a70ff25f3a7681
+
+./.git/objects/43:
+total 4
+-r--r--r--  1 root  users  180 Oct 12 10:32 c72c37725845349003b11fc45432c08f8ff349
+
+./.git/objects/46:
+total 8
+-r--r--r--  1 aubhikcr7  users  2659 Oct 12 09:26 c49f5a7a70c2bf0000d1452c8664dd8d83c432
+
+./.git/objects/47:
+total 4
+-r--r--r--  1 root  users  1106 Oct  6 00:57 002622c214eb72e2ee224d54ba430d242c78fc
+
+./.git/objects/49:
+total 4
+-r--r--r--  1 root  users  578 Oct  5 20:55 533fdace8b2d01d726183875df81231ebc2797
+
+./.git/objects/4c:
+total 4
+-r--r--r--  1 root  users  114 Oct  6 00:57 22a4d11b71c15947ec8088310d27ec61771a98
+
+./.git/objects/4e:
+total 4
+-r--r--r--  1 root  users  131 Oct 11 22:37 ab60c05a5cf8f5f1286c50ecb420596d4c9fc7
+
+./.git/objects/50:
+total 4
+-r--r--r--  1 root  users  220 Oct  4 23:58 b8a9026166f3352b14c0ff40914d0c9733ee68
+
+./.git/objects/59:
+total 8
+-r--r--r--  1 root  users  175 Oct  5 20:55 af3b7697a0502c19d00a2b2bacdbc2ef54e646
+-r--r--r--  1 root  users  339 Oct 11 22:38 f39d7bcef73ed8c76dc1fc77cba747d4a4273a
+
+./.git/objects/5d:
+total 16
+-r--r--r--  1 root  users  6208 Oct  6 01:52 95eaf981f0d8f421917ac75aba2deead8173e7
+
+./.git/objects/5e:
+total 4
+-r--r--r--  1 root  users  366 Oct 12 10:32 b85fb35c318e437b8e734a7c8307ba1615824a
+
+./.git/objects/5f:
+total 28
+-r--r--r--  1 root       users     49 Oct 14 21:32 1d42c1b13dbfe631061badc88e77b32222cf2e
+-r--r--r--  1 aubhikcr7  users  12034 Oct 12 09:26 260937e6c71f51c35d1c550aad1357764246f1
+
+./.git/objects/60:
+total 56
+-r--r--r--  1 aubhikcr7  users  26775 Oct 12 09:26 87f4618df5ceb68dec7846b38b49154ffbdbe9
+
+./.git/objects/61:
+total 12
+-r--r--r--  1 root  users  5684 Oct 11 22:37 c0412f76a684ba54156ef64836a0d232bd3512
+
+./.git/objects/62:
+total 4
+-r--r--r--  1 root  users  1913 Oct 10 02:33 57d311efdcec68bd54301b3f563bbc2fdfc7c0
+
+./.git/objects/63:
+total 28
+-r--r--r--  1 aubhikcr7  users  12610 Oct 12 10:32 f7ab7ad2bdd94c6f693f6ad47909c274030682
+
+./.git/objects/67:
+total 4
+-r--r--r--  1 root  users  1854 Oct 10 02:33 b7f3394c5d95cc8d672606cbe1c4a540457cec
+
+./.git/objects/68:
+total 4
+-r--r--r--  1 root  users  214 Oct 12 09:26 0331526f0c714bb1f4900b0183e8af99f78c3d
+
+./.git/objects/6d:
+total 8
+-r--r--r--  1 root  users  2954 Oct 14 23:59 6a9d45f6200615b689e3aef7a20783ae468076
+
+./.git/objects/72:
+total 4
+-r--r--r--  1 root  users  129 Oct  1 15:51 eeb919c7176e1cb6584ddd3ea4c5b4b6874283
+
+./.git/objects/73:
+total 24
+-r--r--r--  1 root  users   170 Oct 10 02:34 550dc132613ce600eae4778dd48e448b7f4bde
+-r--r--r--  1 root  users   256 Oct  6 00:57 8405b54b896c0592c7ac95b5152bc49781cfe1
+-r--r--r--  1 root  users  7090 Oct 14 21:31 c2eace20ad1e41dc78e889f28d7cdd725973ab
+
+./.git/objects/75:
+total 4
+-r--r--r--  1 root  users  111 Oct  4 23:58 0ca55043b46d36f5c73513b554add4d8f35be7
+
+./.git/objects/7b:
+total 4
+-r--r--r--  1 aubhikcr7  users  1476 Oct  1 18:44 d583c6a6068ea7a794fba5044be9d7f2f1107c
+
+./.git/objects/84:
+total 8
+-r--r--r--  1 root  users  2665 Oct 11 22:37 5ca43b7f385f4191f4a093d5e33372899f4928
+
+./.git/objects/85:
+total 8
+-r--r--r--  1 root  users  3121 Oct 10 02:33 0e1ddfa165765660a53c6fdbd5386f38ef0a08
+
+./.git/objects/89:
+total 24
+-r--r--r--  1 root  users   196 Oct 14 21:32 291f515bb7dfb9c6d62cd355e128dda41864b1
+-r--r--r--  1 root  users  8667 Oct 12 14:16 6810a0beb8175d52f4910b43cec6a599622b07
+
+./.git/objects/8c:
+total 48
+-r--r--r--  1 root  users  23842 Oct 14 23:59 5bbec26ea83ecc5857769dd07cec8fd9401fc3
+
+./.git/objects/90:
+total 4
+-r--r--r--  1 root  users  426 Oct 14 23:59 d1e5ab1c867071ca550ae9474102397c9873d6
+
+./.git/objects/92:
+total 4
+-r--r--r--  1 root  users  175 Oct  1 20:46 f42b4d58fda47dec6113374c08b1e1420eec75
+
+./.git/objects/94:
+total 8
+-r--r--r--  1 root  users  366 Oct 12 12:06 287d1f11e8b6c568e9139537321263f1db2406
+-r--r--r--  1 root  users   16 Oct 10 02:33 5c9b46d684f08ec84cb316e1dc0061e361f794
+
+./.git/objects/95:
+total 4
+-r--r--r--  1 root  users  1281 Oct  6 01:52 ebd19f8bb49f43fd4c2af01e8c898ef27debfb
+
+./.git/objects/99:
+total 4
+-r--r--r--  1 root  users  137 Oct 14 23:59 cace3332d1a257ccbfa49dd9a1a30956796e68
+
+./.git/objects/9d:
+total 4
+-r--r--r--  1 aubhikcr7  users  1333 Oct  1 20:37 959ffe9526ec58145e266696d23891e75b8aca
+
+./.git/objects/9f:
+total 8
+-r--r--r--  1 root  users  3389 Oct 14 23:59 1db21936371b82897bba87f90abceb9f787739
+
+./.git/objects/a0:
+total 4
+-r--r--r--  1 root  users  80 Oct 11 22:38 bcc938a1231af1ea39f9730eccb2ccf87963b8
+
+./.git/objects/a2:
+total 4
+-r--r--r--  1 root  users  62 Oct  4 23:58 d9ed868704e31664876a4e65f511f933d01586
+
+./.git/objects/a6:
+total 8
+-r--r--r--  1 root  users  3265 Oct 10 04:40 db8e26aa2749e0e97111b11669bd3b7d6b77ab
+
+./.git/objects/a7:
+total 12
+-r--r--r--  1 root  users  5998 Oct  6 00:57 4f823ab7bb1dc116660e4e99801cfe1a3280ff
+
+./.git/objects/a9:
+total 28
+-r--r--r--  1 root  users  13050 Oct 12 14:16 582c10d6fbf28a1eb8d95a12661914a28727c5
+
+./.git/objects/aa:
+total 8
+-r--r--r--  1 aubhikcr7  users  2923 Oct 12 10:32 25bfd706b24fe9699a97e41df73b0e795263a5
+
+./.git/objects/ab:
+total 4
+-r--r--r--  1 root  users  111 Oct 12 14:17 177bd52ca40d8a8d192a69f321359a4fbe9787
+
+./.git/objects/ac:
+total 80
+-r--r--r--  1 root  users  33153 Oct 14 21:31 9a0ed6d32ea7276764d31239c522c9ddefe759
+-r--r--r--  1 root  users   2473 Oct 14 21:31 b2af0e5016fea233fd8e0095789f11a8edde9b
+-r--r--r--  1 root  users    147 Oct  5 20:55 ee81e2835751bff3dba060f7b2451755f96231
+
+./.git/objects/ad:
+total 4
+-r--r--r--  1 root  users  396 Oct 14 23:59 ccf91d620819b17e4f61516a9212518cd7f705
+
+./.git/objects/ae:
+total 4
+-r--r--r--  1 root  users  1300 Oct 12 10:32 01b8c2992bf63cb03dc04f3c0bedeb3d4bf15f
+
+./.git/objects/b1:
+total 4
+-r--r--r--  1 root  users  394 Oct 14 21:32 6b66a6f4b60ae43ef6388ae3c0356d2ff4bea1
+
+./.git/objects/b3:
+total 36
+-r--r--r--  1 aubhikcr7  users  18068 Oct  1 15:49 cbbc77f22ad955b869088f9c37877914f59577
+
+./.git/objects/b5:
+total 12
+-r--r--r--  1 root  users   176 Oct  4 23:58 0b27e0f2a7066f6376cea3a845b30739673072
+-r--r--r--  1 root  users  3380 Oct 14 21:31 2c97d97c4b4f2eb5044798171c39dc7e56dc39
+
+./.git/objects/b8:
+total 28
+-r--r--r--  1 root       users  5301 Oct  4 23:58 144f9c3a197d5ae8576b74c7aa72ad4ca10cc6
+-r--r--r--  1 aubhikcr7  users  7266 Oct  1 18:44 9ea899a6282d15cb9b51352bbfe01fa1410d92
+
+./.git/objects/b9:
+total 4
+-r--r--r--  1 root  users  187 Oct  6 00:57 cbd8f3bd3b29ad6b7b3c0333dfaa072002f2e7
+
+./.git/objects/ba:
+total 4
+-r--r--r--  1 root  users  353 Oct 10 02:33 c8ae7407ff4d5a21cefdfc1785582c0ee14b0f
+
+./.git/objects/bb:
+total 20
+-r--r--r--  1 root  users  8755 Oct 12 12:06 a20756e7472e316666c4380b9c3dc36b2af8ad
+
+./.git/objects/bc:
+total 4
+-r--r--r--  1 aubhikcr7  users  62 Oct  1 18:44 626b515d064d9728042b13748d83c83c847d42
+
+./.git/objects/bf:
+total 4
+-r--r--r--  1 root  users  258 Oct  6 01:52 adabd744e39f2399d4730cd229054976411d77
+
+./.git/objects/cd:
+total 4
+-r--r--r--  1 root  users  231 Oct 11 22:38 01d8d9bec2e257d844b91975d2046bdc3ad2c5
+
+./.git/objects/cf:
+total 4
+-r--r--r--  1 root  users  366 Oct 12 14:17 dec3b34f0d108de7bf7cf747e4bb8217dc1c5e
+
+./.git/objects/d0:
+total 12
+-r--r--r--  1 root  users  5694 Oct 12 09:26 c408112a12fe17ac32b7cbe99a78449d055c05
+
+./.git/objects/d4:
+total 4
+-r--r--r--  1 root  users  123 Oct 10 02:33 680ac58282af7059f227e8c46e182175ac71d2
+
+./.git/objects/d7:
+total 4
+-r--r--r--  1 root  users  123 Oct 14 21:31 2a23ef093dc4e33c071d5506196122c8a99853
+
+./.git/objects/d8:
+total 4
+-r--r--r--  1 root  users  365 Oct 12 09:26 d4354d9c9b7f873ebe9e8ad59e7ba4669a4afd
+
+./.git/objects/d9:
+total 4
+-r--r--r--  1 root  users  191 Oct 12 14:17 9401d2680c46960f480ad418ba44edc26f6f39
+
+./.git/objects/da:
+total 28
+-r--r--r--  1 root  users  13132 Oct 12 12:06 c23eef90ce7ab595e02175b121e8d910976207
+
+./.git/objects/db:
+total 8
+-r--r--r--  1 root  users  2125 Oct  4 23:58 ab31003718f9dc77c9a110ca804a6dfee08ecc
+
+./.git/objects/dc:
+total 4
+-r--r--r--  1 root  users  23 Oct 10 02:33 04213993901599c31a9697e7a256dfa5637e52
+
+./.git/objects/e0:
+total 4
+-r--r--r--  1 root  users  205 Oct  1 20:39 aa8aa608e121f8496d7832262cb339e4f04cc7
+
+./.git/objects/e2:
+total 4
+-r--r--r--  1 aubhikcr7  users  131 Oct  1 18:44 4a93539f350890a2937f83ba3dd4c1db3350c4
+
+./.git/objects/e3:
+total 20
+-r--r--r--  1 root  users  8863 Oct 14 23:59 6c9bc43bf0d4f1e2648bb329ea78b0cf793633
+
+./.git/objects/e6:
+total 28
+-r--r--r--  1 aubhikcr7  users     15 Oct 14 23:59 9de29bb2d1d6434b8b29ae775ad8c2e48c5391
+-r--r--r--  1 root       users  12012 Oct 11 22:37 b54910a4e7139cb6e12e7b6098530cf763909d
+
+./.git/objects/eb:
+total 4
+-r--r--r--  1 root  users  339 Oct 10 04:42 97e0fd63211ff272ec504dc90153690982785a
+
+./.git/objects/ec:
+total 16
+-r--r--r--  1 root  users  7147 Oct 14 23:59 5ccdf313dfe46ad3c9ce2194ded385086622b3
+
+./.git/objects/ef:
+total 4
+-r--r--r--  1 root  users  198 Oct 14 23:59 b33f78446437022b8ae3ec8e3b4869d3f806b4
+
+./.git/objects/f0:
+total 12
+-r--r--r--  1 root  users  5925 Oct 12 10:32 84aba5fa70e7db142d3113a2365e8760a2a27c
+
+./.git/objects/f1:
+total 24
+-r--r--r--  1 root  users   269 Oct 10 04:42 5bf299ab0bb7ec5c17d4f8749646dd3088992b
+-r--r--r--  1 root  users  8220 Oct 12 10:32 9db72b460bcf69cbcf039371741f22759c1ed9
+
+./.git/objects/f4:
+total 8
+-r--r--r--  1 root  users  2589 Oct 10 02:33 acab6dc4d6c0d1388a9d0d2828bb2cda322f77
+
+./.git/objects/f7:
+total 4
+-r--r--r--  1 root  users  20 Oct 10 02:33 3f3093ff865c514c6c51f867e35f693487d0d3
+
+./.git/objects/f8:
+total 4
+-r--r--r--  1 root  users  285 Oct  5 20:55 769eaff863ac7e0d611c3db8ac65413e135f22
+
+./.git/objects/fb:
+total 448
+-r--r--r--  1 root  users  202463 Oct  5 20:55 2d1e35365d11cb4391f0f14ab1d0fdec60dbd8
+
+./.git/objects/fc:
+total 8
+-r--r--r--  1 root  users   140 Oct  1 20:46 16c2739d85e497f3ef2dccba1db1e6fbb968f1
+-r--r--r--  1 root  users  1754 Oct  5 20:55 506449714e71d3cf289f183328ea86047c9861
+
+./.git/objects/fe:
+total 12
+-r--r--r--  1 root  users  6032 Oct 10 02:33 10d1f12fd3758a828f2b039f8d40b9b31c4f46
+
+./.git/objects/info:
+total 0
+
+./.git/objects/pack:
+total 0
+
+./.git/refs:
+total 12
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 14 23:59 heads
+drwxr-xr-x  3 root       users  512 Oct  1 16:14 remotes
+drwxr-xr-x  2 aubhikcr7  users  512 Oct  1 15:48 tags
+
+./.git/refs/heads:
+total 4
+-rw-r--r--  1 root  users  41 Oct 14 23:59 master
+
+./.git/refs/remotes:
+total 4
+drwxr-xr-x  2 root  users  512 Oct 14 23:59 origin
+
+./.git/refs/remotes/origin:
+total 4
+-rw-r--r--  1 root  users  41 Oct 14 23:59 master
+
+./.git/refs/tags:
+total 0
+
+./dd:
+total 4
+-rw-r--r--  1 aubhikcr7  users    0 Oct  4 18:34 a
+-rw-r--r--  1 aubhikcr7  users    0 Oct  4 18:34 b
+-rw-r--r--  1 aubhikcr7  users    0 Oct  4 18:34 c
+-rw-r--r--  1 aubhikcr7  users    0 Oct  4 18:34 d
+-rw-r--r--  1 aubhikcr7  users    0 Oct  4 18:34 e
+-rw-r--r--  1 root       users    0 Oct 11 22:00 f
+-rw-r--r--  1 root       users    0 Oct 11 22:00 g
+-rw-r--r--  1 root       users    0 Oct 11 22:00 h
+-rw-r--r--  1 root       users    0 Oct 11 22:00 i
+-rw-r--r--  1 root       users    0 Oct 11 22:00 j
+-rw-r--r--  1 root       users    0 Oct 11 22:00 k
+drwxr-xr-x  2 aubhikcr7  users  512 Oct 13 23:12 temp
+
+./dd/temp:
+total 0
+-rw-r--r--  1 aubhikcr7  users 0 Oct 13 23:12 ls.c
+
+./testdir:
+total 132
+-rw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38 	
+-rw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38  
+-rwxr-xr-x  1 aubhikcr7  users      8336 Oct  9 19:38 a.out
+-rw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+-rw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38 atime
+-rw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38 empty
+-rwxr-xr-x  1 aubhikcr7  users         0 Oct  9 19:38 executable
+prw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38 fifo
+-rw-r--r--  2 aubhikcr7  users         5 Oct  9 19:38 file
+-rw-------  1 aubhikcr7  users  10240020 Oct  9 19:38 file.hole
+-rw-r--r--  2 aubhikcr7  users         5 Oct  9 19:38 file2
+-rw-r--r--  1 aubhikcr7  users         0 Oct  9 19:38 foobar
+-rw-r--r--  1 aubhikcr7  users       723 Oct  9 19:38 hole.c
+-rw-r--r--  1 aubhikcr7  users         0 Jan 18 07:24 inthefuture
+-rw-r--r--  1 aubhikcr7  users         0 Dec  1 00:00 longago
+lrwxr-xr-x  1 aubhikcr7  users         1 Oct  9 19:38 ls-LR -> /
+---S------  1 aubhikcr7  users         0 Oct  9 19:38 missing-exec
+-rw-r--r--  1 aubhikcr7  1234          0 Oct  9 19:38 nogroup
+-rw-r--r--  1 1234       users         0 Oct  9 19:38 noowner
+lrwxr-xr-x  1 aubhikcr7  users         8 Oct  9 19:38 nowhere -> /nowhere
+crw-rw-rw-  1 root       wheel      2, 2 Oct  9 18:58 null
+drwxr-xr-t  2 aubhikcr7  users       512 Oct  9 19:38 subdir
+-rwsr-sr-x  1 aubhikcr7  users         0 Oct  9 19:38 suid:sgid
+lrwxr-xr-x  1 aubhikcr7  users         5 Oct  9 19:38 symlink -> file2
+-rw-r-----  1 root       users         0 Oct  9 19:38 wd0
+
+./testdir/subdir:
+total 0
+lrwxr-xr-x  1 aubhikcr7  users  1 Oct  9 19:38 loopdir -> .

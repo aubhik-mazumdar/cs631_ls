@@ -17,20 +17,6 @@
 #include "ls.h"
 #include "print_function.h"
 #include "cmp.h"
-/* ls [ -AacCdFfhiklnqRrSstuwx1] */
-/*
- * PRINT OPTIONS
- *  -C -> multi column
- *  -F -> Display / after directory, * after executable, @ after symbolic link, % after whiteout, = after socket, | after FIFO
- *  -s -> size displayed in human readable format with -s and -l, overrides -k. If both -k and -h are specified, the rightmost is considered
- *  -l -> display long format
- *  -n -> group and owner IDs are displayed numerically
- *  -q -> non-printable characters as ?
- *  LOGIC OPTIONS
- *  -c -> use time when file status was last changed for sorting and printing
- *  -f -> not sorted
- *    
- */
 
 #define FTS_OPTIONS_A FTS_PHYSICAL | FTS_NOCHDIR | FTS_SEEDOT | FTS_WHITEOUT
 #define FTS_OPTIONS FTS_PHYSICAL | FTS_NOCHDIR | FTS_WHITEOUT
@@ -225,7 +211,11 @@ Rtraverse(struct opts_holder opts,char * const *dir_name){
     FTS* file_system = NULL;
     FTSENT* parent = NULL;
     FTSENT *child = NULL; 
+    node head = NULL; 
+    char *doubleDot = "..";
+    int max[5] = {0};
     int (*comparefxn)(const FTSENT **,const FTSENT **);
+    int i;
     
     comparefxn = get_compare(opts);
     
@@ -234,6 +224,7 @@ Rtraverse(struct opts_holder opts,char * const *dir_name){
     else
         file_system = fts_open(dir_name,FTS_OPTIONS,comparefxn); 
     
+
     if (file_system != NULL)
     {
         while((parent = fts_read(file_system)))
@@ -246,11 +237,18 @@ Rtraverse(struct opts_holder opts,char * const *dir_name){
                     if(opts._a && parent->fts_level != 0 && parent->fts_name[0] == '.')
                         break;
 
-                    if(parent->fts_name[0] != '.' && strnlen(parent->fts_name,2)!=1)
+                    if(parent->fts_name[0] != '.'){
                         printf("\n%s:\n",parent->fts_path);
+                    }
 
-                    node head= NULL; 
-                    int max[5] = {0};
+                    head = NULL;
+                    for(i=0;i<5;++i)
+                        max[i] = 0;
+ 
+                    if(parent->fts_level != 0 && parent->fts_name[0] == '.' \
+                            && strcmp(parent->fts_name,doubleDot)!=0)
+                        continue;
+
                     child = fts_children(file_system,0);
                     while(child != NULL){
                         if(!opts._A && !opts._a){
@@ -270,7 +268,9 @@ Rtraverse(struct opts_holder opts,char * const *dir_name){
                     break;
             }
         }
-        fts_close(file_system);
+        if((fts_close(file_system)==-1)){
+            fprintf(stderr,"Error while closing file system %s:%s\n",*dir_name,strerror(errno));
+        } 
     }
 }
 

@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <fts.h>
 #include <grp.h>
+#include <time.h>
 #include <inttypes.h>
 #include <limits.h>
 #include <pwd.h>
@@ -16,7 +17,8 @@
 #include "print_function.h"
 #define MODE_STRLEN 12
 #define HUMANIZE_FLAGS HN_DECIMAL | HN_NOSPACE | HN_B
-
+#define KB 1024
+#define DEF_BLOCKSIZE 512
 void
 print_permissions(struct stat *fileStat){
     char modeString[MODE_STRLEN];
@@ -86,10 +88,13 @@ print_time(FTSENT *file,struct opts_holder opts){
     char *timeString;
     int i;
     fileStat = *(file->fts_statp);
+    tzset();
     if(opts._c){
         if((timeString = ctime(&fileStat.st_ctime)) == NULL){
             timeString = (char *)fileStat.st_ctime;
         }
+    } else if(opts._u){
+        timeString = ctime(&fileStat.st_atime);
     } else {
         timeString = ctime(&fileStat.st_mtime);
     }
@@ -194,7 +199,7 @@ print_function(node head,struct opts_holder opts,int *max){
                 printf("total %ld\n",temp);
             }
         } else if(opts._k){
-            temp = max[3]*512;
+            temp = max[3]*DEF_BLOCKSIZE;
             if((prefix = humanize_number(bytes,5,temp,"",HN_AUTOSCALE,HN_NOSPACE))!=-1){
                 printf("total ");
                 for(int i=0;i<prefix-1;i++)
@@ -202,7 +207,7 @@ print_function(node head,struct opts_holder opts,int *max){
                 putchar('\n');
             }
         } else {
-            temp = max[3] * 512;
+            temp = max[3] * DEF_BLOCKSIZE;
             temp /= blocksize;
             printf("total %ld\n",temp);
         }
@@ -225,7 +230,7 @@ print_function(node head,struct opts_holder opts,int *max){
 
 
         if(opts._s){
-            temp = fileStat->st_blocks * 512;
+            temp = fileStat->st_blocks * DEF_BLOCKSIZE;
             if(opts._h){
                 if(humanize_number(bytes,5,(int64_t)temp,"", \
                             HN_AUTOSCALE,HUMANIZE_FLAGS)!= -1){
@@ -236,20 +241,22 @@ print_function(node head,struct opts_holder opts,int *max){
                     printf("%*d ",max[4],(int)temp);
                 }
             } else {
-                temp /= blocksize;
-                printf("%*d ",max[4],(int)temp);
+                if(opts._k)
+                    printf("%*d ",max[4],(int)(temp/KB));
+                else 
+                    printf("%*d ",max[4],(int)(temp/blocksize));
             }
         }
-    if(opts._l){
-        print_permissions(fileStat);
-        print_no_of_links(fileStat);
-        print_owner(fileStat->st_uid,fileStat->st_gid,opts,max);
-        print_bytes(fileStat,opts,max);
-        print_time(file,opts);
-        print_pathname(file,opts);
-    } else {
-        print_pathname(file,opts);
-    }
-    p = p->next;
+        if(opts._l){
+            print_permissions(fileStat);
+            print_no_of_links(fileStat);
+            print_owner(fileStat->st_uid,fileStat->st_gid,opts,max);
+            print_bytes(fileStat,opts,max);
+            print_time(file,opts);
+            print_pathname(file,opts);
+        } else {
+            print_pathname(file,opts);
+        }
+        p = p->next;
     }
 }
