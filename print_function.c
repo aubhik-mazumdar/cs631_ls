@@ -80,7 +80,7 @@ print_bytes(struct stat *fileStat,struct opts_holder opts,int *max)
         printf("%*s ",maxBytesLength,charDevice);
         return;
     }
-    
+        
     if(opts._h){
         if(humanize_number(bytes,5,actual_size,"",HN_AUTOSCALE, \
                     HUMANIZE_FLAGS)==-1){
@@ -209,7 +209,7 @@ print_function(node head,struct opts_holder opts,int *max)
     p = head;
     (void)getbsize(NULL,&blocksize);
     
-    if(!opts._d && (opts._l || opts._s)){
+    if(!opts._d && (opts._l || opts._s )){
         if(opts._h){
             temp = max[3];
             if(humanize_number(bytes,5,temp,"",HN_AUTOSCALE,HUMANIZE_FLAGS)!= -1){
@@ -274,7 +274,9 @@ print_function(node head,struct opts_holder opts,int *max)
             print_bytes(fileStat,opts,max);
             print_time(file,opts);
             print_pathname(file,opts);
-        } else {
+        } else if(opts._s){
+                print_pathname(file,opts);
+        } else{
             print_pathname(file,opts);
         }
         p = p->next;
