@@ -1,5 +1,0 @@
-T is one of your "local" time zones, so whatever's in `time.tzname`.
-
-In the short term, I think the right thing to do would be to update the documentation to remove the reference to "EST", and add an explanatory note in the section about %Z that explains that it accepts a few hard-coded values + whatever's in `time.tzname`.
-
-In the long run, I think the best "out of the box" support we can provide would be supporting %Z when %z is present (per Alexander's suggestion), and possibly something akin to `dateutil`'s "tzinfos", where a mapping between abbreviations and `tzinfo` objects could be passed to `strptime` explicitly.
